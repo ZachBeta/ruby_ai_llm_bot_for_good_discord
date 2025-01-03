@@ -5,10 +5,18 @@ require_relative 'lib/llm_client'
 
 class DiscordBot
   def initialize
-    @bot = Discordrb::Bot.new(token: ENV['DISCORD_TOKEN'])
+    puts "Initializing Discord bot..."
+    @token = ENV['DISCORD_TOKEN']
+    puts "DISCORD_TOKEN: #{@token[0..5]}...#{@token[-5..-1]}"
+    @bot = Discordrb::Bot.new(token: @token)
+    puts "Discord bot initialized."
     @llm = LlmClient.new
+    puts "LLM client initialized."
     setup_commands
+    puts "Commands setup."
     setup_auto_reload
+
+    puts "Discord bot setup complete."
   end
 
   def start
@@ -18,6 +26,7 @@ class DiscordBot
   private
 
   def setup_auto_reload
+    puts "Setting up auto-reload..."
     listener = Listen.to('.') do |modified, added, removed|
       files = modified + added + removed
       if files.any? { |f| f.end_with?('.rb') }
@@ -26,6 +35,7 @@ class DiscordBot
       end
     end
     listener.start
+    puts "Auto-reload started."
   end
 
   def setup_commands

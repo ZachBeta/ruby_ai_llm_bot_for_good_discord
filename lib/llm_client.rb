@@ -6,8 +6,8 @@ class LlmClient
   BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
   def initialize
-    # @api_key = ENV['OPENROUTER_API_KEY']
-    @api_key = "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"
+    @api_key = ENV['OPENROUTER_API_KEY']
+    puts "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
   end
 
   def generate_response(prompt, image_url = nil)
