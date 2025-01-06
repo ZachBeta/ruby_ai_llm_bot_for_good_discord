@@ -1,5 +1,10 @@
 # Discord Bot with OpenRouter LLM Integration
 
+## Run
+```
+bundle exec ruby bot.rb
+```
+
 ## Setup
 1. Create a Discord Application
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)

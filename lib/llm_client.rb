@@ -11,8 +11,14 @@ class LlmClient
   end
 
   def generate_response(prompt, image_url = nil)
-    response = make_request(build_messages(prompt, image_url))
-    p response
+    p "prompt: #{prompt}"
+    # response = make_request(build_messages(prompt, image_url))
+    response = make_request(prompt)
+
+    p "response: #{response}"
+    p "response body: #{response.body}"
+    p "response body parsed: #{JSON.parse(response.body)}"
+
     parse_response(response)
   end
 
@@ -25,6 +31,7 @@ class LlmClient
   end
 
   def make_request(messages)
+    p "messages: #{messages}"
     uri = URI(BASE_URL)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -37,7 +44,7 @@ class LlmClient
       messages: messages
     }.to_json
 
-    p request.body
+    # p request.body
     http.request(request)
   end
 

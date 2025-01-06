@@ -1,14 +1,19 @@
-# DONE
-* basic bot runs
-* ruby reload
+✅ DONE
+- [x] basic bot runs
+- [x] ruby reload
 
-# NOW
+🔄 NOW
+- [ ] Fix message parsing issues
+  - [ ] Investigate JSON parsing problems
+  - [ ] Evaluate current prompt parsing
+  - [ ] Research alternative models
+  - [ ] Review OpenRouter config options
 
-# NEXT
-* run this bot on pairing?
-* fold into the mono repo?
+🎯 NEXT
+- [ ] Evaluate running bot on pairing
+- [ ] Consider monorepo integration
 
-
-# SOON
-* get bot to handle a longer chat history
-* can bundler bundle into a local directory for cursor reasons?
+🔜 SOON
+- [ ] Implement longer chat history handling
+- [ ] Investigate local bundler directory for Cursor
+- [ ] Add debugging/database logging for requests
