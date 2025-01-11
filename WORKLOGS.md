@@ -8,6 +8,7 @@
   - [ ] Evaluate current prompt parsing
   - [ ] Research alternative models
   - [ ] Review OpenRouter config options
+  * [ ] pay open router to use other models
 
 🎯 NEXT
 - [ ] Evaluate running bot on pairing

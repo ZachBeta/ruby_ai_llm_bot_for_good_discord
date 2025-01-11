@@ -40,8 +40,10 @@ class LlmClient
     request['Content-Type'] = 'application/json'
     request['Authorization'] = "Bearer #{@api_key}"
     request.body = {
-      model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
-      messages: messages
+      model: "google/gemini-flash-1.5-8b",
+      prompt: messages,
+      # model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
+      # messages: messages
     }.to_json
 
     # p request.body
