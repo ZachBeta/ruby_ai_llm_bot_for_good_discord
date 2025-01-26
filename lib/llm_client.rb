@@ -11,15 +11,20 @@ class LlmClient
   end
 
   def generate_response(prompt, image_url = nil)
-    p "prompt: #{prompt}"
-    # response = make_request(build_messages(prompt, image_url))
-    response = make_request(prompt)
+    # p "prompt: #{prompt}"
+    response = make_request(build_messages(prompt, image_url))
+    # response = make_request(prompt)
 
-    p "response: #{response}"
-    p "response body: #{response.body}"
-    p "response body parsed: #{JSON.parse(response.body)}"
+    # p "response: #{response}"
+    # p "response body: #{response.body}"
+    # p "response body parsed: #{JSON.parse(response.body)}"
+    # p "response code: #{response.code}"
 
-    parse_response(response)
+    # foo = parse_response(response)
+    # p "foo: #{foo}"
+    # "hello world from generate_response"
+    p response
+    response
   end
 
   private
@@ -40,14 +45,25 @@ class LlmClient
     request['Content-Type'] = 'application/json'
     request['Authorization'] = "Bearer #{@api_key}"
     request.body = {
-      model: "google/gemini-flash-1.5-8b",
-      prompt: messages,
-      # model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
-      # messages: messages
+      # model: "google/gemini-flash-1.5-8b",
+      # prompt: messages,
+      model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
+      messages: messages
     }.to_json
 
     # p request.body
-    http.request(request)
+    # p http.request(request) 
+    response = http.request(request)
+    p "response: #{response}"
+    p "response code: #{response.code}"
+    p "response body: #{response.body}"
+    p "response body parsed: #{JSON.parse(response.body)}"
+    p "response body parsed choices: #{JSON.parse(response.body)['choices']}"
+    p "response body parsed choices first: #{JSON.parse(response.body)['choices'][0]}"
+    p "response body parsed choices first message: #{JSON.parse(response.body)['choices'][0]['message']}"
+    p "response body parsed choices first message content: #{JSON.parse(response.body)['choices'][0]['message']['content']}"
+    good_response = JSON.parse(response.body)['choices'][0]['message']['content']
+    # response
   end
 
   def parse_response(response)
