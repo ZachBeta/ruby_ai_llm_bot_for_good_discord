@@ -1,5 +1,10 @@
 # Discord Bot with OpenRouter LLM Integration
 
+## Test
+```
+bundle exec rake test
+```
+
 ## Run
 ```
 bundle exec ruby bot.rb
