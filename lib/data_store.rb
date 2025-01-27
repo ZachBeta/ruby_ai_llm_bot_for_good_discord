@@ -1,9 +1,18 @@
 class DataStore
   def initialize
     # @messages = {}
+    @messages = []
   end
 
-  def store(name)
+  def store(prompt_and_response)
+    # arr.each
+    # arr.push
+    # arr <<
+    @messages << prompt_and_response
+  end
+
+  def fetch_raw_store
+    @messages
   end
 
   def get_messages 
