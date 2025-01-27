@@ -13,20 +13,25 @@ class DataStore
 
   def get_messages 
     @messages.inject([]) { |acc, message|
-      acc << {
-        role: 'user',
-        content: {
-          type: 'text',
-          text: message[:prompt]
-        },
-      }
-      acc << {
-        role: 'assistant',
-        content: {
-          type: 'text',
-          text: message[:response]
+      if message[:prompt] 
+        acc << {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: message[:prompt]
+          },
         }
-      }
+      end
+      if message[:response]
+        acc << {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: message[:response]
+          }
+        }
+      end
+      acc
     }
   end
 end

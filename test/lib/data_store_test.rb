@@ -72,4 +72,30 @@ class DataStoreTest < Minitest::Test
     ]
     assert_equal data_store.get_messages, expected_messages
   end
+
+  def test_store_one_prompt_one_response
+    data_store = DataStore.new
+    data_store.store({
+      prompt: "What is the capital of France?",
+    })
+    data_store.store({
+      response: "The capital of France is Paris."
+    })
+    assert_equal data_store.get_messages, [
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: "What is the capital of France?"
+        },
+      },
+      {
+        role: 'assistant',
+        content: {
+          type: 'text',
+          text: "The capital of France is Paris."
+        }
+      }
+    ]
+  end
 end

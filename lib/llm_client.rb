@@ -14,9 +14,14 @@ class LlmClient
   end
 
   def generate_response(prompt)
-    response = make_request(build_messages(prompt))
+    p "generate_response called with prompt: #{prompt}"
     @data_store.store({
       prompt: prompt,
+    })
+    messages = build_messages(prompt)
+    p "messages: #{messages}"
+    response = make_request(messages)
+    @data_store.store({
       response: response
     })
     response
@@ -25,7 +30,7 @@ class LlmClient
   private
 
   def build_messages(prompt)
-    generate_response(prompt)
+    @data_store.get_messages
   end
 
   def make_request(messages)
