@@ -5,6 +5,8 @@
 bundle exec ruby bot.rb
 ```
 
+we want to store all messages in memory, can we make a dictionary or map on every messge sent and received, we call this function and store in an instrance variable
+
 ## Setup
 1. Create a Discord Application
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)

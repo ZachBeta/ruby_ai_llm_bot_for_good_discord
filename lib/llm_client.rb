@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 require 'uri'
+require_relative 'data_store'
 
 class LlmClient
   BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
@@ -9,6 +10,7 @@ class LlmClient
     # @api_key = ENV['OPENROUTER_API_KEY']
     @api_key = ENV['OPEN_ROUTER_API_KEY_DEEP_PURPLE']
     puts "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
+    @data_store = DataStore.new
   end
 
   def generate_response(prompt)
