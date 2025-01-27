@@ -44,6 +44,8 @@ class DiscordBot
     end
 
     @bot.mention do |event|
+      p "mention event: #{event}"
+      p "event.content: #{event.content}"
       prompt = event.content.gsub(/<@!?\d+>/, '').strip
       response = @llm.generate_response(prompt)
       event.respond response

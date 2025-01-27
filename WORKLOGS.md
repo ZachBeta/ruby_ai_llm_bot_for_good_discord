@@ -9,6 +9,8 @@
   * [x] pay open router to use other models
 
 🔄 NOW
+* [ ] handle incoming username - looks like it gives us a discord user id
+gotta find the api docs
 
 🎯 NEXT
 - [ ] Evaluate running bot on pairing
