@@ -1,5 +1,10 @@
 # Discord Bot with OpenRouter LLM Integration
 
+## set up ruby
+* https://rvm.io/
+* check out rvm and rbenv
+   * rvm is probably easier
+
 ## Test
 ```
 bundle exec rake test
