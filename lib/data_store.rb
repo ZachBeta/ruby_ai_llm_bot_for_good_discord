@@ -1,13 +1,9 @@
 class DataStore
   def initialize
-    # @messages = {}
     @messages = []
   end
 
   def store(prompt_and_response)
-    # arr.each
-    # arr.push
-    # arr <<
     @messages << prompt_and_response
   end
 
@@ -16,21 +12,21 @@ class DataStore
   end
 
   def get_messages 
-    [
-      {
-      role: 'user',
-      content: {
+    @messages.inject([]) { |acc, message|
+      acc << {
+        role: 'user',
+        content: {
           type: 'text',
-          text: "What is the capital of France?"
+          text: message[:prompt]
         },
-      },
-      {
+      }
+      acc << {
         role: 'assistant',
         content: {
           type: 'text',
-          text: "The capital of France is Paris."
+          text: message[:response]
         }
       }
-    ]
+    }
   end
 end
