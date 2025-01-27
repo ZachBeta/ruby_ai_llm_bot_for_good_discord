@@ -6,13 +6,14 @@ class LlmClient
   BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
   def initialize
-    @api_key = ENV['OPENROUTER_API_KEY']
+    # @api_key = ENV['OPENROUTER_API_KEY']
+    @api_key = ENV['OPEN_ROUTER_API_KEY_DEEP_PURPLE']
     puts "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
   end
 
-  def generate_response(prompt, image_url = nil)
+  def generate_response(prompt)
     # p "prompt: #{prompt}"
-    response = make_request(build_messages(prompt, image_url))
+    response = make_request(build_messages(prompt))
     # response = make_request(prompt)
 
     # p "response: #{response}"
@@ -29,9 +30,8 @@ class LlmClient
 
   private
 
-  def build_messages(prompt, image_url)
+  def build_messages(prompt)
     content = [{ type: 'text', text: prompt }]
-    content << { type: 'image_url', image_url: { url: image_url } } if image_url
     [{ role: 'user', content: content }]
   end
 
@@ -47,23 +47,29 @@ class LlmClient
     request.body = {
       # model: "google/gemini-flash-1.5-8b",
       # prompt: messages,
-      model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
+      # model: 'meta-llama/llama-3.2-90b-vision-instruct:free',
+      # model: "deepseek/deepseek-r1",
+      model: "deepseek/deepseek-chat",
       messages: messages
     }.to_json
 
+    p "request body: #{request.body}"
     # p request.body
     # p http.request(request) 
     response = http.request(request)
-    p "response: #{response}"
-    p "response code: #{response.code}"
-    p "response body: #{response.body}"
+    # p "response: #{response}"
+    # p "response code: #{response.code}"
+    # p "response body: #{response.body}"
     p "response body parsed: #{JSON.parse(response.body)}"
-    p "response body parsed choices: #{JSON.parse(response.body)['choices']}"
-    p "response body parsed choices first: #{JSON.parse(response.body)['choices'][0]}"
-    p "response body parsed choices first message: #{JSON.parse(response.body)['choices'][0]['message']}"
+    # p "response body parsed choices: #{JSON.parse(response.body)['choices']}"
+    # p "response body parsed choices first: #{JSON.parse(response.body)['choices'][0]}"
+    # p "response body parsed choices first message: #{JSON.parse(response.body)['choices'][0]['message']}"
     p "response body parsed choices first message content: #{JSON.parse(response.body)['choices'][0]['message']['content']}"
     good_response = JSON.parse(response.body)['choices'][0]['message']['content']
-    # response
+
+    # trim good_response down to 2000 characters
+    good_response = good_response[0..2000]
+    good_response
   end
 
   def parse_response(response)

@@ -14,7 +14,7 @@ class DiscordBot
     puts "LLM client initialized."
     setup_commands
     puts "Commands setup."
-    setup_auto_reload
+    # setup_auto_reload
 
     puts "Discord bot setup complete."
   end
