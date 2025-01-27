@@ -48,8 +48,7 @@ class LlmClient
     request['Content-Type'] = 'application/json'
     request['Authorization'] = "Bearer #{@api_key}"
     request.body = {
-      model: "deepseek/deepseek-chat",
-      format: "json",
+      model: "openai/gpt-4o-mini",
       messages: messages
     }.to_json
 
