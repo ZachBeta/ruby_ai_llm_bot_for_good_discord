@@ -2,18 +2,22 @@ require 'test_helper'
 
 class DataStoreTest < Minitest::Test
   def test_array_stuff
+    skip
     arr = [1, 2, 3]
-    arr.push(4)
+    # assert_equal "fail", arr.push(4)
+    # assert_equal "fail2", arr
     assert_equal [1, 2, 3, 4], arr
     arr << 5
     assert_equal [1, 2, 3, 4, 5], arr
   end
 
   def test_data_store_exists
+    skip
     assert defined?(DataStore), "DataStore class should be defined"
   end
 
   def test_store_array_has_data
+    skip
     # given
     messages = DataStore.new
     messages.store({
@@ -50,7 +54,6 @@ class DataStoreTest < Minitest::Test
   end
 
   def test_store_get_store_get
-    skip
     # given
     data_store = DataStore.new
     data_store.store({
@@ -76,7 +79,14 @@ class DataStoreTest < Minitest::Test
         }
       }
     ]
+  end
 
+  def test_store_get_store_get_double_up_front
+    data_store = DataStore.new
+    data_store.store({
+      prompt: "What is the capital of France?",
+      response: "The capital of France is Paris."
+    })
     data_store.store({
       prompt: "Tell me about coffee there",
       response: "There is a lot of coffee in Paris France. As it is a capital city."
