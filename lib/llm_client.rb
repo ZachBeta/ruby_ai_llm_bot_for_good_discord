@@ -30,7 +30,13 @@ class LlmClient
   private
 
   def build_messages(prompt)
-    @data_store.get_messages
+    system_prompt = [
+      {
+        role: 'system',
+        content: "You are a helpful assistant. You answer short and concise."
+      },
+    ]
+    system_prompt + @data_store.get_messages
   end
 
   def make_request(messages)
