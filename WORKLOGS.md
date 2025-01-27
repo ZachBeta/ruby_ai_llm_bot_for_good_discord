@@ -1,14 +1,14 @@
 ✅ DONE
 - [x] basic bot runs
 - [x] ruby reload
+- [x] Fix message parsing issues
+  - [x] Investigate JSON parsing problems
+  - [x] Evaluate current prompt parsing
+  - [x] Research alternative models
+  - [x] Review OpenRouter config options
+  * [x] pay open router to use other models
 
 🔄 NOW
-- [ ] Fix message parsing issues
-  - [ ] Investigate JSON parsing problems
-  - [ ] Evaluate current prompt parsing
-  - [ ] Research alternative models
-  - [ ] Review OpenRouter config options
-  * [ ] pay open router to use other models
 
 🎯 NEXT
 - [ ] Evaluate running bot on pairing
