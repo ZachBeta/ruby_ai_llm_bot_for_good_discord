@@ -26,6 +26,14 @@ class LlmClient
     # foo = parse_response(response)
     # p "foo: #{foo}"
     # "hello world from generate_response"
+    # pair the prompt & response
+    # send that data to DataStore
+
+    data_store.store({
+      prompt: prompt,
+      response: response
+    })
+
     p response
     response
   end
@@ -33,8 +41,20 @@ class LlmClient
   private
 
   def build_messages(prompt)
-    content = [{ type: 'text', text: prompt }]
-    [{ role: 'user', content: content }]
+    # content = [{ type: 'text', text: prompt }]
+    # message_array = [{ role: 'user', content: content }]
+
+    # TODO: add a system level prompt to keep responses short and concise
+    foo = [{
+      role: 'user',
+      content: {
+        type: 'text',
+        text: prompt
+      }
+    }]
+
+    # message_array
+    foo
   end
 
   def make_request(messages)
