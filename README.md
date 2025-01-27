@@ -5,6 +5,10 @@
 * check out rvm and rbenv
    * rvm is probably easier
 
+```
+bundle
+```
+
 ## Test
 ```
 bundle exec rake test
