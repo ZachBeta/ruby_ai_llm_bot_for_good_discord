@@ -16,19 +16,13 @@ class DataStore
       if message[:prompt] 
         acc << {
           role: 'user',
-          content: {
-            type: 'text',
-            text: message[:prompt]
-          },
+          content: message[:prompt]
         }
       end
       if message[:response]
         acc << {
           role: 'assistant',
-          content: {
-            type: 'text',
-            text: message[:response]
-          }
+          content: message[:response]
         }
       end
       acc

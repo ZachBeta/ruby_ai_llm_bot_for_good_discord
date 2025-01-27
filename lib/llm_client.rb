@@ -43,6 +43,7 @@ class LlmClient
     request['Authorization'] = "Bearer #{@api_key}"
     request.body = {
       model: "deepseek/deepseek-chat",
+      format: "json",
       messages: messages
     }.to_json
 

@@ -14,17 +14,11 @@ class DataStoreTest < Minitest::Test
     assert_equal data_store.get_messages, [
       {
         role: 'user',
-        content: {
-          type: 'text',
-          text: "What is the capital of France?"
-        },
+        content: "What is the capital of France?"
       },
       {
         role: 'assistant',
-        content: {
-          type: 'text',
-          text: "The capital of France is Paris."
-        }
+        content: "The capital of France is Paris."
       }
     ]
   end
@@ -43,31 +37,19 @@ class DataStoreTest < Minitest::Test
     expected_messages = [
       {
         role: 'user',
-        content: {
-          type: 'text',
-          text: "What is the capital of France?"
-        },
+        content:  "What is the capital of France?"
       },
       {
         role: 'assistant',
-        content: {
-          type: 'text',
-          text: "The capital of France is Paris."
-        }
+        content: "The capital of France is Paris."
       },
       {
         role: 'user',
-        content: {
-          type: 'text',
-          text: "Tell me about coffee there"
-        }
+        content: "Tell me about coffee there"
       },
       {
         role: 'assistant',
-        content: {
-          type: 'text',
-          text: "There is a lot of coffee in Paris France. As it is a capital city."
-        }
+        content: "There is a lot of coffee in Paris France. As it is a capital city."
       }
     ]
     assert_equal data_store.get_messages, expected_messages
@@ -84,17 +66,11 @@ class DataStoreTest < Minitest::Test
     assert_equal data_store.get_messages, [
       {
         role: 'user',
-        content: {
-          type: 'text',
-          text: "What is the capital of France?"
-        },
+        content: "What is the capital of France?"
       },
       {
         role: 'assistant',
-        content: {
-          type: 'text',
-          text: "The capital of France is Paris."
-        }
+        content: "The capital of France is Paris."
       }
     ]
   end
