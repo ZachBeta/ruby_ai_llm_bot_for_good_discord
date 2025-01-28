@@ -46,8 +46,21 @@ class DiscordBot
     @bot.mention do |event|
       p "mention event: #{event}"
       p "event.content: #{event.content}"
-      prompt = event.content.gsub(/<@!?\d+>/, '').strip
-      response = @llm.generate_response(prompt)
+      p "event.user: #{event.user}"
+      p "event.user.name: #{event.user.name}"
+      raw_message = event.content.strip
+      # TODO: search for <@user_id> and replace with user_name
+      raw_message.scan(/<@!?\d+>/).each do |mention|
+        p "mention: #{mention}"
+        user_id = mention.scan(/\d+/).first.to_i
+        p "user_id: #{user_id}"
+        user_lookup = @bot.user(user_id)
+        p "user_lookup: #{user_lookup}"
+        raw_message = raw_message.gsub(mention, user_lookup.name)
+      end
+      
+      user_message = "#{event.user.name}: #{raw_message}"
+      response = @llm.generate_response(user_message)
       event.respond response
     end
   end
