@@ -3,6 +3,12 @@ require 'dotenv/load'
 require 'listen'
 require_relative 'lib/llm_client'
 
+# BOT_STRING="deepseek/deepseek-r1-distill-llama-70b"
+# BOT_STRING="deepseek/deepseek-r1:free"
+# BOT_STRING="anthropic/claude-3.5-sonnet:beta"
+# BOT_STRING="google/gemini-flash-1.5"
+BOT_STRING="openai/gpt-4o-mini"
+
 class DiscordBot
   def initialize
     puts "Initializing Discord bot..."
@@ -14,13 +20,19 @@ class DiscordBot
     puts "LLM client initialized."
     setup_commands
     puts "Commands setup."
-    # setup_auto_reload
+    send_to_channel(ENV['DISCORD_CHANNEL_ID'], "Restarted\n#{Time.now.iso8601(9)}\n#{BOT_STRING}")
+    setup_auto_reload
 
     puts "Discord bot setup complete."
   end
 
   def start
     @bot.run
+  end
+
+  def send_to_channel(channel_id, message)
+    p "Sending message to channel #{channel_id}: #{message}"
+    @bot.send_message(channel_id, message)
   end
 
   private
@@ -39,15 +51,27 @@ class DiscordBot
   end
 
   def setup_commands
-    @bot.message(start_with: '!ping') do |event|
-      event.respond 'Pong!'
+    @bot.message(start_with: '!debug') do |event|
+      response = <<~STR
+        Using model: #{BOT_STRING}\n
+        message count: #{@llm.data_store.size}\n
+      STR
+      event.respond response
     end
 
     @bot.mention do |event|
-      p "mention event: #{event}"
-      p "event.content: #{event.content}"
-      p "event.user: #{event.user}"
-      p "event.user.name: #{event.user.name}"
+      p "=== Mention Event Details ==="
+      p "Channel ID: #{event.channel.id}"
+      p "Channel Name: #{event.channel.name}"
+      p "Server ID: #{event.server&.id}"
+      p "Server Name: #{event.server&.name}"
+      p "Message ID: #{event.message.id}"
+      p "Content: #{event.content}"
+      p "Author ID: #{event.user.id}"
+      p "Author Name: #{event.user.name}"
+      p "Timestamp: #{event.timestamp}"
+      p "=========================="
+      
       raw_message = event.content.strip
       # TODO: search for <@user_id> and replace with user_name
       raw_message.scan(/<@!?\d+>/).each do |mention|
