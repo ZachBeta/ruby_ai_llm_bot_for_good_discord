@@ -85,12 +85,19 @@ bundle
    ```
 
 2. Bot Commands:
+
    - `!debug @bot` - gives basic debug details
    - `!ping` - Bot replies "Pong!" - TODO: does it?
    - `@BotName <prompt>` - Bot generates response using whichever OpenRouter LLM is configured
    - For images, include an image URL in your message
 
+3. switching LLMs
+   - find options in https://openrouter.ai/models?order=top-weekly
+   - swap the string out in the env var
+
 # TODO:
 
 - confirm .ruby-version
 - install latest ruby rather than 3.2.2
+- experiment w requests to different LLMs
+  - instructions on changing bot string
