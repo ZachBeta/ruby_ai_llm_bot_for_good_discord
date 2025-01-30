@@ -5,9 +5,9 @@ require_relative 'lib/llm_client'
 
 # BOT_STRING="deepseek/deepseek-r1-distill-llama-70b"
 # BOT_STRING="deepseek/deepseek-r1:free"
-BOT_STRING="anthropic/claude-3.5-sonnet:beta"
+# BOT_STRING="anthropic/claude-3.5-sonnet:beta"
 # BOT_STRING="google/gemini-flash-1.5"
-# BOT_STRING="openai/gpt-4o-mini"
+BOT_STRING="openai/gpt-4o-mini"
 
 class DiscordBot
   def initialize
