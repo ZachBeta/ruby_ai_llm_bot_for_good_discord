@@ -18,6 +18,7 @@ gotta find the api docs
 
 🔄 NOW
 * [ ] move into rails
+
 * [ ] add message storage
 
 🎯 NEXT
