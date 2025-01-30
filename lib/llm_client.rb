@@ -48,7 +48,7 @@ class LlmClient
     request['Content-Type'] = 'application/json'
     request['Authorization'] = "Bearer #{@api_key}"
     request.body = {
-      model: "openai/gpt-4o-mini",
+      model: "google/gemini-flash-1.5",
       messages: messages
     }.to_json
 
