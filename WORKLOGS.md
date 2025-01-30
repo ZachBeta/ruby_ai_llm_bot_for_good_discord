@@ -20,3 +20,11 @@ gotta find the api docs
 - [ ] Implement longer chat history handling
 - [ ] Investigate local bundler directory for Cursor
 - [ ] Add debugging/database logging for requests
+* [ ] 4o-mini has 2k character context window
+  * first build context from messages, convert to string, rip off last 1999 characters
+    * this would require some string building
+  or
+  * grab last few records
+
+* recover from an error by rebooting
+* send a hello message on restart
