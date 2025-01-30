@@ -1,4 +1,5 @@
 ✅ DONE
+
 - [x] basic bot runs
 - [x] ruby reload
 - [x] Fix message parsing issues
@@ -21,14 +22,28 @@ gotta find the api docs
 
 * [ ] add message storage
 
+- [x] handle incoming username - looks like it gives us a discord user id
+      gotta find the api docs
+
+- clean up readme and install steps
+
+
 🎯 NEXT
+
 - [ ] Evaluate running bot on pairing
 - [ ] Consider monorepo integration
 
 🔜 SOON
+
 * [ ] mention in thread appears to break
+
+
 - [ ] Implement longer chat history handling
 - [ ] Investigate local bundler directory for Cursor
 - [ ] Add debugging/database logging for requests
 
+
 * recover from an error by rebooting
+
+we want to store all messages in memory, can we make a dictionary or map on every messge sent and received, we call this function and store in an instrance variable
+

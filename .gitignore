@@ -2,3 +2,5 @@ packages
 .env
 .gems
 .bundle
+
+text.txt
