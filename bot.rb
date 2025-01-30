@@ -3,7 +3,8 @@ require 'dotenv/load'
 require 'listen'
 require_relative 'lib/llm_client'
 
-BOT_STRING="deepseek/deepseek-r1-distill-llama-70b"
+# BOT_STRING="deepseek/deepseek-r1-distill-llama-70b"
+BOT_STRING="deepseek/deepseek-r1:free"
 # BOT_STRING="google/gemini-flash-1.5"
 # BOT_STRING="openai/gpt-4o-mini"
 
