@@ -4,6 +4,8 @@ require 'uri'
 require_relative 'data_store'
 
 class LlmClient
+  attr_accessor :data_store
+
   BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
   def initialize

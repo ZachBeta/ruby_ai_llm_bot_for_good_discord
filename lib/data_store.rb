@@ -7,6 +7,10 @@ class DataStore
     @messages << prompt_and_response
   end
 
+  def size
+    @messages.size
+  end
+
   def fetch_raw_store
     @messages
   end

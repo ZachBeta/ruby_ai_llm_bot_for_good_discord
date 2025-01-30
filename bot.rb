@@ -4,7 +4,8 @@ require 'listen'
 require_relative 'lib/llm_client'
 
 # BOT_STRING="deepseek/deepseek-r1-distill-llama-70b"
-BOT_STRING="deepseek/deepseek-r1:free"
+# BOT_STRING="deepseek/deepseek-r1:free"
+BOT_STRING="anthropic/claude-3.5-sonnet:beta"
 # BOT_STRING="google/gemini-flash-1.5"
 # BOT_STRING="openai/gpt-4o-mini"
 
@@ -20,7 +21,7 @@ class DiscordBot
     setup_commands
     puts "Commands setup."
     send_to_channel(ENV['DISCORD_CHANNEL_ID'], "Restarted\n#{Time.now.iso8601(9)}\n#{BOT_STRING}")
-    # setup_auto_reload
+    setup_auto_reload
 
     puts "Discord bot setup complete."
   end
@@ -50,6 +51,13 @@ class DiscordBot
   end
 
   def setup_commands
+    @bot.message(start_with: '!debug') do |event|
+      response = <<~STR
+        Using model: #{BOT_STRING}\n
+        message count: #{@llm.data_store.size}\n
+      STR
+      event.respond response
+    end
 
     @bot.mention do |event|
       p "=== Mention Event Details ==="
