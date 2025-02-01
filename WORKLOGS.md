@@ -8,29 +8,15 @@
   - [x] Research alternative models
   - [x] Review OpenRouter config options
   * [x] pay open router to use other models
-* send a hello message on restart
 * [x] handle incoming username - looks like it gives us a discord user id
 gotta find the api docs
-* [x] 4o-mini has 2k character context window
-  * first build context from messages, convert to string, rip off last 1999 characters
-    * this would require some string building
-  or
-  * grab last few records
+- [x] Investigate local bundler directory for Cursor
 
 🔄 NOW
-* [ ] move into rails
-
-* [ ] add message storage
-
-- [x] handle incoming username - looks like it gives us a discord user id
-      gotta find the api docs
-
-- clean up readme and install steps
-
+* [ ] drop into rails 8 for more general tooling access in codebase
 
 🎯 NEXT
-
-- [ ] Evaluate running bot on pairing
+- [ ] Evaluate running bot on pairing or other durable enough server
 - [ ] Consider monorepo integration
 
 🔜 SOON
@@ -47,3 +33,4 @@ gotta find the api docs
 
 we want to store all messages in memory, can we make a dictionary or map on every messge sent and received, we call this function and store in an instrance variable
 
+- [ ] Add debugging/database logging for requests
