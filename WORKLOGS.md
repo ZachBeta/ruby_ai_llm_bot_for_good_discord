@@ -18,6 +18,8 @@ gotta find the api docs
   * store messages - rails g migration message role:string content:string
 
 🎯 NEXT
+* [ ] prompt engineering
+  * store prompts - rails g migration prompt content:string
 - [ ] Consider monorepo integration
 
 🔜 SOON
