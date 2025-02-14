@@ -1,4 +1,5 @@
-# Discord Bot with OpenRouter LLM Integration
+# RAIL_BFG_D
+## Discord Bot with OpenRouter LLM Integration
 
 ```
 bundle exec rake test
