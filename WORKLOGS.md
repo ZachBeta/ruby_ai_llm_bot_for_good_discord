@@ -14,15 +14,15 @@
 
 🔄 NOW
 
-- [ ] Drop into Rails 8 for more general tooling access in codebase
-  - [ ] Store messages - rails g migration message role:string content:string
-
 🎯 NEXT
 
 - [ ] Prompt engineering
-  - [ ] Store prompts - rails g migration prompt content:string
-- [ ] Consider monorepo integration
+  - [ ] Store useful prompts to reuse with - rails g migration prompt content:string
+- [ ] Consider monorepo integration 
 - [ ] Consider pulling in only AREL for persistence
+- [ ] Drop into Rails 8 for more general tooling access in codebase
+  - [ ] Store messages - rails g migration message role:string content:string
+
 
 🔜 SOON
 
