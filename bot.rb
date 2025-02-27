@@ -10,7 +10,7 @@ require_relative 'lib/llm_client'
 BOT_STRING="openai/gpt-4o-mini"
 
 class DiscordBot
-  def initialize
+  def initialize(skip_startup_message: false)
     puts "Initializing Discord bot..."
     @token = ENV['DISCORD_TOKEN']
     puts "DISCORD_TOKEN: #{@token[0..5]}...#{@token[-5..-1]}"
@@ -20,8 +20,14 @@ class DiscordBot
     puts "LLM client initialized."
     setup_commands
     puts "Commands setup."
-    send_to_channel(ENV['DISCORD_CHANNEL_ID'], "Restarted\n#{Time.now.iso8601(9)}\n#{BOT_STRING}")
-    setup_auto_reload
+    
+    # Skip startup message if we're testing or explicitly asked to skip
+    testing_mode = ENV['TESTING'] == 'true'
+    unless testing_mode || skip_startup_message
+      send_to_channel(ENV['DISCORD_CHANNEL_ID'], "Restarted\n#{Time.now.iso8601(9)}\n#{BOT_STRING}")
+    end
+    
+    setup_auto_reload unless testing_mode
 
     puts "Discord bot setup complete."
   end
@@ -110,5 +116,8 @@ class DiscordBot
   end
 end
 
-bot = DiscordBot.new
-bot.start 
+# Only start the bot if this file is run directly (not when loaded in tests)
+if __FILE__ == $0
+  bot = DiscordBot.new
+  bot.start
+end 
