@@ -1,32 +1,32 @@
 ✅ DONE
 
-- [x] basic bot runs
-- [x] ruby reload
+- [x] Basic bot runs
+- [x] Ruby reload
 - [x] Fix message parsing issues
   - [x] Investigate JSON parsing problems
   - [x] Evaluate current prompt parsing
   - [x] Research alternative models
   - [x] Review OpenRouter config options
-  * [x] pay open router to use other models
-* [x] handle incoming username - looks like it gives us a discord user id
-gotta find the api docs
+  - [x] Pay open router to use other models
+- [x] Handle incoming username (Discord user ID)
 - [x] Investigate local bundler directory for Cursor
-- [x] Evaluate running bot on pairing or other durable enough server
+- [x] Evaluate running bot on pairing or other durable server
 
 🔄 NOW
-* [ ] drop into rails 8 for more general tooling access in codebase
-  * store messages - rails g migration message role:string content:string
+
+- [ ] Drop into Rails 8 for more general tooling access in codebase
+  - [ ] Store messages - rails g migration message role:string content:string
 
 🎯 NEXT
-* [ ] prompt engineering
-  * store prompts - rails g migration prompt content:string
+
+- [ ] Prompt engineering
+  - [ ] Store prompts - rails g migration prompt content:string
 - [ ] Consider monorepo integration
+- [ ] Consider pulling in only AREL for persistence
 
 🔜 SOON
 
-* [ ] mention in thread appears to break
+- [ ] Fix mention in thread breaking issue
 - [ ] Implement longer chat history handling
-- [ ] Investigate local bundler directory for Cursor
 - [ ] Add debugging/database logging for requests
-* [ ] recover from an error by rebooting
-- [ ] Add debugging/database logging for requests
+- [ ] Implement error recovery by rebooting
