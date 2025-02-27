@@ -14,30 +14,44 @@ class LlmClient
     @data_store = DataStore.new
   end
 
-  def generate_response(prompt)
-    p "generate_response called with prompt: #{prompt}"
+  def generate_response(prompt, channel_id = nil, thread_id = nil)
+    p "generate_response called with prompt: #{prompt}, channel_id: #{channel_id}, thread_id: #{thread_id}"
     @data_store.store({
       prompt: prompt,
+      channel_id: channel_id,
+      thread_id: thread_id,
+      timestamp: Time.now
     })
-    messages = build_messages(prompt)
+    
+    messages = build_messages(channel_id, thread_id, prompt)
     p "messages: #{messages}"
+    
     response = make_request(messages)
+    
     @data_store.store({
-      response: response
+      response: response,
+      channel_id: channel_id,
+      thread_id: thread_id,
+      timestamp: Time.now
     })
+    
     response
   end
 
   private
 
-  def build_messages(prompt)
+  def build_messages(channel_id, thread_id, prompt)
     system_prompt = [
       {
         role: 'system',
         content: "You are a helpful assistant. You answer short and concise."
       },
     ]
-    system_prompt + @data_store.get_messages
+    
+    # Get conversation history for this channel/thread
+    history = @data_store.get_messages(channel_id, thread_id)
+    
+    system_prompt + history
   end
 
   def make_request(messages)

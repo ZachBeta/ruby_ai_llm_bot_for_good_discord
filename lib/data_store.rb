@@ -1,23 +1,34 @@
 class DataStore
   def initialize
-    @messages = []
+    @conversations = {}
+    @max_history_size = 20
   end
 
-  def store(prompt_and_response)
-    @messages << prompt_and_response
+  def store(message_data)
+    channel_id = message_data[:channel_id] || 'default'
+    thread_id = message_data[:thread_id]
+    
+    conversation_key = build_conversation_key(channel_id, thread_id)
+    
+    @conversations[conversation_key] ||= []
+    @conversations[conversation_key] << message_data
+    
+    # Trim history if it gets too long
+    if @conversations[conversation_key].size > @max_history_size
+      @conversations[conversation_key].shift
+    end
   end
 
-  def size
-    @messages.size
+  def get_conversation(channel_id, thread_id = nil)
+    conversation_key = build_conversation_key(channel_id, thread_id)
+    @conversations[conversation_key] || []
   end
 
-  def fetch_raw_store
-    @messages
-  end
-
-  def get_messages 
-    @messages.inject([]) { |acc, message|
-      if message[:prompt] 
+  def get_messages(channel_id, thread_id = nil)
+    conversation = get_conversation(channel_id, thread_id)
+    
+    conversation.inject([]) do |acc, message|
+      if message[:prompt]
         acc << {
           role: 'user',
           content: message[:prompt]
@@ -30,6 +41,29 @@ class DataStore
         }
       end
       acc
-    }.last(10)
+    end
+  end
+
+  def size
+    @conversations.values.sum(&:size)
+  end
+  
+  def channel_count
+    @conversations.keys.uniq { |key| key.split('::').first }.size
+  end
+  
+  def clear_conversation(channel_id, thread_id = nil)
+    conversation_key = build_conversation_key(channel_id, thread_id)
+    @conversations.delete(conversation_key)
+  end
+  
+  def all_conversations
+    @conversations
+  end
+  
+  private
+  
+  def build_conversation_key(channel_id, thread_id)
+    thread_id ? "#{channel_id}::#{thread_id}" : channel_id.to_s
   end
 end

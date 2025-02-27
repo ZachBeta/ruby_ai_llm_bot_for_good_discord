@@ -52,11 +52,24 @@ class DiscordBot
 
   def setup_commands
     @bot.message(start_with: '!debug') do |event|
+      channel_id = event.channel.id
+      channel_count = @llm.data_store.channel_count
+      total_message_count = @llm.data_store.size
+      
       response = <<~STR
-        Using model: #{BOT_STRING}\n
-        message count: #{@llm.data_store.size}\n
+        Using model: #{BOT_STRING}
+        Active channels: #{channel_count}
+        Total message count: #{total_message_count}
       STR
       event.respond response
+    end
+    
+    @bot.message(start_with: '!clear') do |event|
+      channel_id = event.channel.id
+      thread_id = event.message.thread&.id
+      
+      @llm.data_store.clear_conversation(channel_id, thread_id)
+      event.respond "Conversation history cleared for this #{thread_id ? 'thread' : 'channel'}."
     end
 
     @bot.mention do |event|
@@ -70,10 +83,14 @@ class DiscordBot
       p "Author ID: #{event.user.id}"
       p "Author Name: #{event.user.name}"
       p "Timestamp: #{event.timestamp}"
+      p "Thread ID: #{event.message.thread&.id}"
       p "=========================="
       
+      channel_id = event.channel.id
+      thread_id = event.message.thread&.id
+      
       raw_message = event.content.strip
-      # TODO: search for <@user_id> and replace with user_name
+      # Replace user mentions with usernames
       raw_message.scan(/<@!?\d+>/).each do |mention|
         p "mention: #{mention}"
         user_id = mention.scan(/\d+/).first.to_i
@@ -84,7 +101,7 @@ class DiscordBot
       end
       
       user_message = "#{event.user.name}: #{raw_message}"
-      response = @llm.generate_response(user_message)
+      response = @llm.generate_response(user_message, channel_id, thread_id)
       event.respond response
     end
   end
