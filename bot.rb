@@ -72,7 +72,10 @@ class DiscordBot
       event.respond "Conversation history cleared for this #{thread_id ? 'thread' : 'channel'}."
     end
 
-    @bot.mention do |event|
+    @bot.message do |event|
+      # skip if !command
+      next unless event.content.start_with?('!')
+
       p "=== Mention Event Details ==="
       p "Channel ID: #{event.channel.id}"
       p "Channel Name: #{event.channel.name}"
