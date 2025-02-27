@@ -30,3 +30,4 @@
 - [ ] Implement longer chat history handling
 - [ ] Add debugging/database logging for requests
 - [ ] Implement error recovery by rebooting
+- [ ] containerize to simplify setup
