@@ -10,13 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_03_154020) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_03_161055) do
   create_table "conversations", force: :cascade do |t|
     t.string "channel_id"
     t.string "thread_id"
     t.text "prompt"
     t.text "response"
     t.datetime "timestamp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "prompts", force: :cascade do |t|
+    t.text "content"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

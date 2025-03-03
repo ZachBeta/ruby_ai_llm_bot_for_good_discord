@@ -43,6 +43,40 @@ rails discord_bot:start
 * Supports clearing conversation history with `!clear` command
 * Provides debug information with `!debug` command
 
+## Prompt Management
+
+The bot now supports storing and managing prompts. Here are the available commands:
+
+### List all prompts
+```
+!prompts
+```
+Lists all available prompts by name.
+
+### Create or update a prompt
+```
+!prompt set [name] [content]
+```
+Creates a new prompt or updates an existing one with the given name and content.
+
+### Get a prompt
+```
+!prompt get [name]
+```
+Displays the content of the prompt with the given name.
+
+### Delete a prompt
+```
+!prompt delete [name]
+```
+Deletes the prompt with the given name.
+
+### Set default prompt
+```
+!prompt default [name]
+```
+Sets the prompt with the given name as the default system prompt for all conversations.
+
 ## Development
 
 The bot code is organized in the `app/services/discord_bot` directory:

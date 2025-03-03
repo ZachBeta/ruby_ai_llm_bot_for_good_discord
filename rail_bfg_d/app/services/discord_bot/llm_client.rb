@@ -12,6 +12,7 @@ module DiscordBot
       @api_key = ENV['OPENROUTER_API_KEY']
       Rails.logger.info "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
       @data_store = DataStore.new
+      @prompt_service = PromptService.new
     end
 
     def generate_response(prompt, channel_id = nil, thread_id = nil)
@@ -41,10 +42,13 @@ module DiscordBot
     private
 
     def build_messages(channel_id, thread_id, prompt)
+      # Get default system prompt or use fallback
+      system_prompt_content = get_system_prompt_content
+      
       system_prompt = [
         {
           role: 'system',
-          content: "You are a helpful assistant. You answer short and concise."
+          content: system_prompt_content
         },
       ]
       
@@ -52,6 +56,11 @@ module DiscordBot
       history = @data_store.get_messages(channel_id, thread_id)
       
       system_prompt + history
+    end
+
+    def get_system_prompt_content
+      default_prompt = @prompt_service.find_by_name('default')
+      default_prompt&.content || "You are a helpful assistant. You answer short and concise."
     end
 
     def make_request(messages)
