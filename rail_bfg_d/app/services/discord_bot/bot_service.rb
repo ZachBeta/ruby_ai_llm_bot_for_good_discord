@@ -36,7 +36,7 @@ module DiscordBot
     end
 
     def setup_debug_command
-      @bot.message(start_with: '!debug') do |event|
+      @bot.message(content: /!debug/) do |event|
         Rails.logger.info "!debug command received"
         channel_id = event.channel.id
         channel_count = @llm.data_store.channel_count
@@ -52,7 +52,7 @@ module DiscordBot
     end
     
     def setup_clear_command
-      @bot.message(start_with: '!clear') do |event|
+      @bot.message(content: /!clear/) do |event|
         Rails.logger.info "!clear command received"
         channel_id = event.channel.id
         thread_id = event.message&.thread&.id
@@ -64,7 +64,7 @@ module DiscordBot
 
     def setup_prompt_commands
       # List all prompts
-      @bot.message(start_with: '!prompts') do |event|
+      @bot.message(content: /!prompts/) do |event|
         Rails.logger.info "!prompts command received"
         prompts = @prompt_service.all
         
@@ -80,9 +80,9 @@ module DiscordBot
       end
       
       # Create or update a prompt
-      @bot.message(start_with: '!prompt set') do |event|
+      @bot.message(content: /!prompt set/) do |event|
         Rails.logger.info "!prompt set command received"
-        content = event.content.sub('!prompt set', '').strip
+        content = event.content.sub(/.*?!prompt set/, '').strip
         
         # Extract name and content
         match = content.match(/^(\S+)\s+(.+)$/m)
@@ -104,9 +104,9 @@ module DiscordBot
       end
       
       # Get a prompt
-      @bot.message(start_with: '!prompt get') do |event|
+      @bot.message(content: /!prompt get/) do |event|
         Rails.logger.info "!prompt get command received"
-        name = event.content.sub('!prompt get', '').strip
+        name = event.content.sub(/.*?!prompt get/, '').strip
         
         prompt = @prompt_service.find_by_name(name)
         if prompt
@@ -117,9 +117,9 @@ module DiscordBot
       end
       
       # Delete a prompt
-      @bot.message(start_with: '!prompt delete') do |event|
+      @bot.message(content: /!prompt delete/) do |event|
         Rails.logger.info "!prompt delete command received"
-        name = event.content.sub('!prompt delete', '').strip
+        name = event.content.sub(/.*?!prompt delete/, '').strip
         
         if @prompt_service.delete(name)
           event.respond "Prompt '#{name}' deleted."
@@ -129,9 +129,9 @@ module DiscordBot
       end
       
       # Set default prompt
-      @bot.message(start_with: '!prompt default') do |event|
+      @bot.message(content: /!prompt default/) do |event|
         Rails.logger.info "!prompt default command received"
-        name = event.content.sub('!prompt default', '').strip
+        name = event.content.sub(/.*?!prompt default/, '').strip
         
         prompt = @prompt_service.find_by_name(name)
         if prompt
@@ -149,7 +149,7 @@ module DiscordBot
     end
 
     def setup_help_command
-      @bot.message(start_with: '!help') do |event|
+      @bot.message(content: /!help/) do |event|
         Rails.logger.info "!help command received"
         
         help_text = <<~HELP
@@ -169,6 +169,7 @@ module DiscordBot
           
           **Conversation:**
           Just mention the bot or send a message in an allowed channel to start a conversation.
+          You can also include commands anywhere in your message.
         HELP
         
         event.respond help_text
@@ -178,8 +179,8 @@ module DiscordBot
     def setup_message_handler
       @bot.message do |event|
         Rails.logger.info "Message received"
-        # skip if !command
-        next if event.content.start_with?('!')
+        # Skip if the message contains a command
+        next if event.content.match?(/!(debug|clear|prompts|prompt|help)/)
         
         # Get allowed channels from env (comma-separated list of channel IDs)
         allowed_channels = ENV['BOT_ALLOWED_CHANNELS']&.split(',')&.map(&:strip) || []
