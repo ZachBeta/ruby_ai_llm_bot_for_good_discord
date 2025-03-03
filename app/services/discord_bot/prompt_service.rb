@@ -32,4 +32,4 @@ module DiscordBot
       true
     end
   end
-end 
+end

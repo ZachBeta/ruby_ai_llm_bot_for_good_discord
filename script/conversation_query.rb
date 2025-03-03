@@ -5,7 +5,7 @@ require_relative '../config/environment'
 class ConversationQueryCLI
   def self.run(args)
     command = args.shift || 'help'
-    
+
     case command
     when 'recent'
       limit = (args.first || 10).to_i
@@ -46,11 +46,11 @@ class ConversationQueryCLI
       show_help
     end
   end
-  
+
   def self.show_help
     puts <<~HELP
       Usage: ruby script/conversation_query.rb COMMAND [ARGS]
-      
+
       Commands:
         recent [LIMIT]             - Show recent conversations (default: 10)
         channel CHANNEL_ID [LIMIT] - Show conversations for a specific channel
@@ -58,7 +58,7 @@ class ConversationQueryCLI
         search TERM [LIMIT]        - Search conversations containing a term
         stats                      - Show conversation statistics
         help                       - Show this help message
-      
+
       Examples:
         ruby script/conversation_query.rb recent 5
         ruby script/conversation_query.rb channel 123456789 3
@@ -70,4 +70,4 @@ class ConversationQueryCLI
 end
 
 # Run the CLI with command-line arguments
-ConversationQueryCLI.run(ARGV) 
+ConversationQueryCLI.run(ARGV)

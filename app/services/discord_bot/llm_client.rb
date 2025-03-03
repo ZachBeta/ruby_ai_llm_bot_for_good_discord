@@ -1,15 +1,15 @@
-require 'net/http'
-require 'json'
-require 'uri'
+require "net/http"
+require "json"
+require "uri"
 
 module DiscordBot
   class LlmClient
     attr_accessor :data_store
 
-    BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
+    BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 
     def initialize
-      @api_key = ENV['OPENROUTER_API_KEY']
+      @api_key = ENV["OPENROUTER_API_KEY"]
       Rails.logger.info "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
       @data_store = DataStore.new
       @prompt_service = PromptService.new
@@ -23,19 +23,19 @@ module DiscordBot
         thread_id: thread_id,
         timestamp: Time.now
       })
-      
+
       messages = build_messages(channel_id, thread_id, prompt)
       Rails.logger.info "messages: #{messages}"
-      
+
       response = make_request(messages)
-      
+
       @data_store.store({
         response: response,
         channel_id: channel_id,
         thread_id: thread_id,
         timestamp: Time.now
       })
-      
+
       response
     end
 
@@ -44,22 +44,22 @@ module DiscordBot
     def build_messages(channel_id, thread_id, prompt)
       # Get default system prompt or use fallback
       system_prompt_content = get_system_prompt_content
-      
+
       system_prompt = [
         {
-          role: 'system',
+          role: "system",
           content: system_prompt_content
-        },
+        }
       ]
-      
+
       # Get conversation history for this channel/thread
       history = @data_store.get_messages(channel_id, thread_id)
-      
+
       system_prompt + history
     end
 
     def get_system_prompt_content
-      default_prompt = @prompt_service.find_by_name('default')
+      default_prompt = @prompt_service.find_by_name("default")
       default_prompt&.content || "You are a helpful assistant. You answer short and concise."
     end
 
@@ -69,10 +69,10 @@ module DiscordBot
       http.use_ssl = true
 
       request = Net::HTTP::Post.new(uri)
-      request['Content-Type'] = 'application/json'
-      request['Authorization'] = "Bearer #{@api_key}"
+      request["Content-Type"] = "application/json"
+      request["Authorization"] = "Bearer #{@api_key}"
       request.body = {
-        model: ENV['BOT_STRING'] || "google/gemini-flash-1.5",
+        model: ENV["BOT_STRING"] || "google/gemini-flash-1.5",
         messages: messages
       }.to_json
 
@@ -80,7 +80,7 @@ module DiscordBot
       response = http.request(request)
       Rails.logger.info "response body parsed: #{JSON.parse(response.body)}"
       Rails.logger.info "response body parsed choices first message content: #{JSON.parse(response.body)['choices'][0]['message']['content']}"
-      good_response = JSON.parse(response.body)['choices'][0]['message']['content']
+      good_response = JSON.parse(response.body)["choices"][0]["message"]["content"]
 
       # trim good_response down to 2000 characters
       good_response = good_response[0..2000]
@@ -88,11 +88,11 @@ module DiscordBot
     end
 
     def parse_response(response)
-      return 'Error communicating with LLM' unless response.is_a?(Net::HTTPSuccess)
-      
-      JSON.parse(response.body).dig('choices', 0, 'message', 'content')
+      return "Error communicating with LLM" unless response.is_a?(Net::HTTPSuccess)
+
+      JSON.parse(response.body).dig("choices", 0, "message", "content")
     rescue JSON::ParserError
-      'Error parsing LLM response'
+      "Error parsing LLM response"
     end
   end
-end 
+end

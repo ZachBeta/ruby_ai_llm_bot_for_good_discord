@@ -4,4 +4,4 @@ namespace :discord_bot do
     bot = DiscordBot::BotService.new
     bot.start
   end
-end 
+end
