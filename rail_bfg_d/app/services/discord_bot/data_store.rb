@@ -1,7 +1,9 @@
 module DiscordBot
   class DataStore
     def initialize
+      Rails.logger.info "Initializing DataStore"
       @max_history_size = 20
+      Rails.logger.info "Max history size: #{@max_history_size}"
     end
 
     def store(message_data)
