@@ -90,3 +90,50 @@ The bot code is organized in the `app/services/discord_bot` directory:
 The application uses a SQLite database to store conversation history. The schema includes:
 
 * `conversations` - Stores messages and responses with channel and thread IDs
+
+## Development Tools
+
+### Conversation Query Service
+
+For development and debugging purposes, the application includes a `ConversationQueryService` that allows you to query and inspect conversation data.
+
+#### Using the Command-Line Script
+
+```
+ruby script/conversation_query.rb COMMAND [ARGS]
+```
+
+Available commands:
+* `recent [LIMIT]` - Show recent conversations (default: 10)
+* `channel CHANNEL_ID [LIMIT]` - Show conversations for a specific channel
+* `thread THREAD_ID [LIMIT]` - Show conversations for a specific thread
+* `search TERM [LIMIT]` - Search conversations containing a term
+* `stats` - Show conversation statistics
+
+Examples:
+```
+ruby script/conversation_query.rb recent 5
+ruby script/conversation_query.rb channel 123456789 3
+ruby script/conversation_query.rb thread 987654321
+ruby script/conversation_query.rb search "hello world"
+ruby script/conversation_query.rb stats
+```
+
+#### Using Rake Tasks
+
+```
+rake conversation:recent[LIMIT]
+rake conversation:channel[CHANNEL_ID,LIMIT]
+rake conversation:thread[THREAD_ID,LIMIT]
+rake conversation:search[TERM,LIMIT]
+rake conversation:stats
+```
+
+Examples:
+```
+rake conversation:recent[5]
+rake conversation:channel[123456789,3]
+rake conversation:thread[987654321]
+rake conversation:search["hello world"]
+rake conversation:stats
+```
