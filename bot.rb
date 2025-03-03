@@ -79,6 +79,16 @@ class DiscordBot
       puts "Message received"
       # skip if !command
       next if event.content.start_with?('!')
+      
+      # Get allowed channels from env (comma-separated list of channel IDs)
+      allowed_channels = ENV['BOT_ALLOWED_CHANNELS']&.split(',')&.map(&:strip) || []
+      
+      # Skip if the bot isn't mentioned and not in an allowed channel
+      bot_mentioned = event.content.include?("<@#{@bot.profile.id}>") || 
+                      event.content.include?("<@!#{@bot.profile.id}>")
+      is_allowed_channel = allowed_channels.include?(event.channel.id.to_s)
+      
+      next unless bot_mentioned || is_allowed_channel
 
       p "=== Mention Event Details ==="
       p "Channel ID: #{event.channel.id}"

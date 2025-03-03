@@ -16,6 +16,10 @@
 
 🎯 NEXT
 
+- [ ] attempt at using `I'm considering using Rails ActiveRecord to store the messages in sqlite so we don't lose memory on restart` as prompt got a bit off the beaten path
+  - needs some direction to keep the API of datastore the same, and make changes from there down
+  - consider spinning up another bot to act as avant garde experiments, and keep BodgeIt as a stable copy
+  - run said stable copy on a server that's long living
 - [ ] Prompt engineering
   - [ ] Store useful prompts to reuse with - rails g migration prompt content:string
 - [ ] Consider monorepo integration 
