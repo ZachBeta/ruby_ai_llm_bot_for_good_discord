@@ -1,0 +1,58 @@
+# Discord Bot for Good Discord
+
+This is a Rails application that runs a Discord bot powered by LLMs.
+
+## Prerequisites
+
+* Ruby 3.2.0 or higher
+* Rails 8.0.1
+* Discord bot token
+* OpenRouter API key
+
+## Setup
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   bundle install
+   ```
+3. Set up the database:
+   ```
+   rails db:migrate
+   ```
+4. Set up environment variables in `.env`:
+   ```
+   DISCORD_TOKEN="your-discord-token"
+   DISCORD_CHANNEL_ID="your-discord-channel-id"
+   OPENROUTER_API_KEY="your-openrouter-api-key"
+   BOT_STRING="anthropic/claude-3.5-sonnet" # or any other model
+   ```
+
+## Running the bot
+
+To start the Discord bot:
+
+```
+rails discord_bot:start
+```
+
+## Features
+
+* Responds to messages in allowed channels or when mentioned
+* Maintains conversation history per channel/thread in the database
+* Supports clearing conversation history with `!clear` command
+* Provides debug information with `!debug` command
+
+## Development
+
+The bot code is organized in the `app/services/discord_bot` directory:
+
+* `bot_service.rb` - Main Discord bot service
+* `llm_client.rb` - Client for interacting with LLMs via OpenRouter
+* `data_store.rb` - Database storage for conversation history
+
+## Database
+
+The application uses a SQLite database to store conversation history. The schema includes:
+
+* `conversations` - Stores messages and responses with channel and thread IDs
