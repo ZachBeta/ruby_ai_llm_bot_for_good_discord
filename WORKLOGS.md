@@ -15,11 +15,15 @@
   - [x] Use Rails ActiveRecord with SQLite to store messages
   - [x] Maintain current datastore API while implementing changes
   - [x] Store useful prompts for reuse
+- [x] Implement prompt engineering features
+  - [x] Create prompt model and service
+  - [x] Implement CRUD operations for prompts
 
 🔄 NOW
 
 - [ ] Complete prompt engineering features
   - [ ] Test prompt commands in Discord
+  - [ ] Implement prompt selection in bot commands
   - [ ] Create experimental bot separate from stable BodgeIt version
   - [ ] Deploy stable version on long-living server
 
@@ -29,12 +33,13 @@
 - [ ] Consider pulling in only AREL for persistence
 - [ ] Migrate to Rails 8 for better tooling
   - [ ] Implement additional message storage features
+- [ ] Allow default prompt storage and creation of new prompts from existing ones
 
 🔜 SOON
 
-- [ ] Allow default prompt storage and creation of new prompts from existing ones
 - [ ] Fix mention in thread breaking issue
 - [ ] Implement longer chat history handling
 - [ ] Add debugging/database logging for requests
 - [ ] Implement error recovery by rebooting
 - [ ] Containerize to simplify setup
+- [ ] Add user preferences for default prompts
