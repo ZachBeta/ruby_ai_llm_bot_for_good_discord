@@ -7,7 +7,8 @@ require_relative 'lib/llm_client'
 # BOT_STRING="deepseek/deepseek-r1:free"
 # BOT_STRING="anthropic/claude-3.5-sonnet:beta"
 # BOT_STRING="google/gemini-flash-1.5"
-BOT_STRING="openai/gpt-4o-mini"
+# BOT_STRING="openai/gpt-4o-mini"
+BOT_STRING="anthropic/claude-3.5-sonnet"
 
 class DiscordBot
   def initialize
@@ -52,6 +53,7 @@ class DiscordBot
 
   def setup_commands
     @bot.message(start_with: '!debug') do |event|
+      puts "!debug command received"
       channel_id = event.channel.id
       channel_count = @llm.data_store.channel_count
       total_message_count = @llm.data_store.size
@@ -65,16 +67,18 @@ class DiscordBot
     end
     
     @bot.message(start_with: '!clear') do |event|
+      puts "!clear command received"
       channel_id = event.channel.id
-      thread_id = event.message.thread&.id
+      thread_id = event.message&.thread&.id
       
       @llm.data_store.clear_conversation(channel_id, thread_id)
       event.respond "Conversation history cleared for this #{thread_id ? 'thread' : 'channel'}."
     end
 
     @bot.message do |event|
+      puts "Message received"
       # skip if !command
-      next unless event.content.start_with?('!')
+      next if event.content.start_with?('!')
 
       p "=== Mention Event Details ==="
       p "Channel ID: #{event.channel.id}"
@@ -86,11 +90,19 @@ class DiscordBot
       p "Author ID: #{event.user.id}"
       p "Author Name: #{event.user.name}"
       p "Timestamp: #{event.timestamp}"
-      p "Thread ID: #{event.message.thread&.id}"
+      # p "Thread ID: #{event.message&.thread&.id}"
       p "=========================="
       
       channel_id = event.channel.id
-      thread_id = event.message.thread&.id
+
+      # if there is a thread, use it
+      # otherwise, use the channel id
+      thread_id = nil
+      begin
+        thread_id = event.message&.thread&.id
+      rescue
+        p "No thread ID found"
+      end
       
       raw_message = event.content.strip
       # Replace user mentions with usernames
@@ -104,7 +116,9 @@ class DiscordBot
       end
       
       user_message = "#{event.user.name}: #{raw_message}"
+      puts "User message: #{user_message}"
       response = @llm.generate_response(user_message, channel_id, thread_id)
+      puts "Response: #{response}"
       event.respond response
     end
   end

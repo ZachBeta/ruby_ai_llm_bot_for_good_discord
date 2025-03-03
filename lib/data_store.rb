@@ -24,7 +24,7 @@ class DataStore
     @conversations[conversation_key] || []
   end
 
-  def get_messages(channel_id, thread_id = nil)
+  def get_messages(channel_id = 'default', thread_id = nil)
     conversation = get_conversation(channel_id, thread_id)
     
     conversation.inject([]) do |acc, message|
