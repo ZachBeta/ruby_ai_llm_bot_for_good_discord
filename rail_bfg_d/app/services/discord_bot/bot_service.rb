@@ -31,6 +31,7 @@ module DiscordBot
       setup_debug_command
       setup_clear_command
       setup_prompt_commands
+      setup_help_command
       setup_message_handler
     end
 
@@ -144,6 +145,33 @@ module DiscordBot
         else
           event.respond "Prompt '#{name}' not found."
         end
+      end
+    end
+
+    def setup_help_command
+      @bot.message(start_with: '!help') do |event|
+        Rails.logger.info "!help command received"
+        
+        help_text = <<~HELP
+          **Available Commands:**
+          
+          **General Commands:**
+          `!help` - Display this help message
+          `!clear` - Clear conversation history for this channel/thread
+          `!debug` - Show debug information about the bot
+          
+          **Prompt Management:**
+          `!prompts` - List all available prompts
+          `!prompt set [name] [content]` - Create or update a prompt
+          `!prompt get [name]` - Display the content of a prompt
+          `!prompt delete [name]` - Delete a prompt
+          `!prompt default [name]` - Set a prompt as the default system prompt
+          
+          **Conversation:**
+          Just mention the bot or send a message in an allowed channel to start a conversation.
+        HELP
+        
+        event.respond help_text
       end
     end
 
