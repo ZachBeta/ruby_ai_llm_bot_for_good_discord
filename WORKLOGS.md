@@ -18,28 +18,42 @@
 - [x] Implement prompt engineering features
   - [x] Create prompt model and service
   - [x] Implement CRUD operations for prompts
+- [x] Consider pulling in only AREL for persistence
+- [x] Migrate to Rails 8 for better tooling
+  - [x] Implement additional message storage features
+- [x] Add debugging/database logging for requests
 
 🔄 NOW
 
 - [ ] Complete prompt engineering features
   - [ ] Test prompt commands in Discord
   - [ ] Implement prompt selection in bot commands
+  - [ ] Add user interface for prompt management
+- [ ] Implement deployment strategy
   - [ ] Create experimental bot separate from stable BodgeIt version
   - [ ] Deploy stable version on long-living server
+  - [ ] Containerize to simplify setup
+- [ ] Fix mention in discord thread breaking issue
 
 🎯 NEXT
 
+- [ ] Enhance conversation management
+  - [ ] Implement longer chat history handling
+  - [ ] Add tests to confirm chat history functionality
+  - [ ] Improve error handling and recovery
+- [ ] Improve prompt system
+  - [ ] Allow default prompt storage
+  - [ ] Enable creation of new prompts from existing ones
+  - [ ] Add user preferences for default prompts
+
+🔜 FUTURE
+
 - [ ] Consider monorepo integration
-- [ ] Consider pulling in only AREL for persistence
-- [ ] Migrate to Rails 8 for better tooling
-  - [ ] Implement additional message storage features
-- [ ] Allow default prompt storage and creation of new prompts from existing ones
-
-🔜 SOON
-
-- [ ] Fix mention in thread breaking issue
-- [ ] Implement longer chat history handling
-- [ ] Add debugging/database logging for requests
-- [ ] Implement error recovery by rebooting
-- [ ] Containerize to simplify setup
-- [ ] Add user preferences for default prompts
+- [ ] Implement advanced features
+  - [ ] Add support for multiple LLM providers
+  - [ ] Implement conversation summarization
+  - [ ] Add analytics for bot usage
+- [ ] Improve documentation
+  - [ ] Create comprehensive setup guide
+  - [ ] Document API and service architecture
+  - [ ] Add examples for common use cases
