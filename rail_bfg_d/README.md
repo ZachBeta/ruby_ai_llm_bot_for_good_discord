@@ -28,6 +28,22 @@ This is a Rails application that runs a Discord bot powered by LLMs.
    BOT_STRING="anthropic/claude-3.5-sonnet" # or any other model
    ```
 
+5. Discord Bot Setup:
+   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
+   - Click "New Application" and give it a name
+   - Go to the "Bot" section and click "Add Bot"
+   - Scroll to privileged gateway intents
+     - Enable all 3 toggles for presence, server members, message content
+   - Reset token and copy it
+   - In Developer Portal, go to OAuth2 > URL Generator
+   - Select "bot" under scopes
+   - Select needed permissions:
+     - Send Messages
+     - Send Messages in Threads
+     - Read Message History
+   - Discord admin can use generated URL to invite bot
+   - Confirm by going to server settings > apps/integrations > bots & apps
+
 ## Running the bot
 
 To start the Discord bot:
@@ -42,6 +58,11 @@ rails discord_bot:start
 * Maintains conversation history per channel/thread in the database
 * Supports clearing conversation history with `!clear` command
 * Provides debug information with `!debug` command
+* Bot Commands:
+  - `!debug @bot` - gives basic debug details
+  - `!ping` - Bot replies "Pong!"
+  - `@BotName <prompt>` - Bot generates response using the configured LLM
+  - For images, include an image URL in your message
 
 ## Prompt Management
 
