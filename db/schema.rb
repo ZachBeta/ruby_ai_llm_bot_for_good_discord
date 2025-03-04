@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_03_161055) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_04_132455) do
   create_table "conversations", force: :cascade do |t|
     t.string "channel_id"
     t.string "thread_id"
@@ -26,5 +26,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_161055) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "channel_id"
   end
 end

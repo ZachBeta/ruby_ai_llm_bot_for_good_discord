@@ -43,7 +43,7 @@ module DiscordBot
 
     def build_messages(channel_id, thread_id, prompt)
       # Get default system prompt or use fallback
-      system_prompt_content = get_system_prompt_content
+      system_prompt_content = get_system_prompt_content(channel_id)
 
       system_prompt = [
         {
@@ -58,8 +58,17 @@ module DiscordBot
       system_prompt + history
     end
 
-    def get_system_prompt_content
-      default_prompt = @prompt_service.find_by_name("default")
+    def get_system_prompt_content(channel_id = nil)
+      # First try to find a channel-specific default prompt
+      default_prompt = nil
+      if channel_id
+        default_prompt = @prompt_service.find_by_name("default", channel_id)
+      end
+      
+      # If no channel-specific prompt, fall back to global default
+      default_prompt ||= @prompt_service.find_by_name("default")
+      
+      # If still no prompt, use the fallback text
       default_prompt&.content || "You are a helpful assistant. You answer short and concise."
     end
 

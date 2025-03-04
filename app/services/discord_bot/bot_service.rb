@@ -69,14 +69,20 @@ module DiscordBot
       @bot.message do |event|
         next unless event.content.start_with?("!prompts")
         Rails.logger.info "!prompts command received"
-        prompts = @prompt_service.all
+        
+        # Check if channel-specific flag is provided
+        channel_specific = event.content.include?("--channel")
+        channel_id = channel_specific ? event.channel.id.to_s : nil
+        
+        prompts = @prompt_service.all(channel_id)
 
         if prompts.empty?
           event.respond "No prompts found."
         else
-          response = "Available prompts:\n"
+          response = channel_specific ? "Available prompts for this channel:\n" : "Available global prompts:\n"
           prompts.each do |prompt|
-            response += "- #{prompt.name}\n"
+            prefix = prompt.channel_id ? "[Channel] " : "[Global] "
+            response += "- #{prefix}#{prompt.name}\n"
           end
           event.respond response
         end
@@ -87,6 +93,11 @@ module DiscordBot
         next unless event.content.start_with?("!prompt set")
         Rails.logger.info "!prompt set command received"
         content = event.content.sub("!prompt set", "").strip
+        
+        # Check if channel-specific flag is provided
+        channel_specific = content.include?("--channel")
+        content = content.gsub("--channel", "").strip if channel_specific
+        channel_id = channel_specific ? event.channel.id.to_s : nil
 
         # Extract name and content
         match = content.match(/^(\S+)\s+(.+)$/m)
@@ -94,16 +105,18 @@ module DiscordBot
           name = match[1]
           prompt_content = match[2]
 
-          prompt = @prompt_service.find_by_name(name)
+          prompt = @prompt_service.find_by_name(name, channel_id)
           if prompt
-            @prompt_service.update(name, prompt_content)
-            event.respond "Prompt '#{name}' updated."
+            @prompt_service.update(name, prompt_content, channel_id)
+            scope = channel_specific ? "for this channel" : "globally"
+            event.respond "Prompt '#{name}' updated #{scope}."
           else
-            @prompt_service.create(name, prompt_content)
-            event.respond "Prompt '#{name}' created."
+            @prompt_service.create(name, prompt_content, channel_id)
+            scope = channel_specific ? "for this channel" : "globally"
+            event.respond "Prompt '#{name}' created #{scope}."
           end
         else
-          event.respond "Invalid format. Use: !prompt set [name] [content]"
+          event.respond "Invalid format. Use: !prompt set [name] [content] (add --channel for channel-specific)"
         end
       end
 
@@ -111,13 +124,22 @@ module DiscordBot
       @bot.message do |event|
         next unless event.content.start_with?("!prompt get")
         Rails.logger.info "!prompt get command received"
-        name = event.content.sub("!prompt get", "").strip
+        content = event.content.sub("!prompt get", "").strip
+        
+        # Check if channel-specific flag is provided
+        channel_specific = content.include?("--channel")
+        content = content.gsub("--channel", "").strip if channel_specific
+        channel_id = channel_specific ? event.channel.id.to_s : nil
+        
+        name = content.strip
 
-        prompt = @prompt_service.find_by_name(name)
+        prompt = @prompt_service.find_by_name(name, channel_id)
         if prompt
-          event.respond "Prompt '#{name}':\n```\n#{prompt.content}\n```"
+          scope = prompt.channel_id ? "Channel-specific" : "Global"
+          event.respond "#{scope} prompt '#{name}':\n```\n#{prompt.content}\n```"
         else
-          event.respond "Prompt '#{name}' not found."
+          scope = channel_specific ? "Channel-specific" : "Global"
+          event.respond "#{scope} prompt '#{name}' not found."
         end
       end
 
@@ -125,12 +147,21 @@ module DiscordBot
       @bot.message do |event|
         next unless event.content.start_with?("!prompt delete")
         Rails.logger.info "!prompt delete command received"
-        name = event.content.sub("!prompt delete", "").strip
+        content = event.content.sub("!prompt delete", "").strip
+        
+        # Check if channel-specific flag is provided
+        channel_specific = content.include?("--channel")
+        content = content.gsub("--channel", "").strip if channel_specific
+        channel_id = channel_specific ? event.channel.id.to_s : nil
+        
+        name = content.strip
 
-        if @prompt_service.delete(name)
-          event.respond "Prompt '#{name}' deleted."
+        if @prompt_service.delete(name, channel_id)
+          scope = channel_specific ? "for this channel" : "globally"
+          event.respond "Prompt '#{name}' deleted #{scope}."
         else
-          event.respond "Prompt '#{name}' not found."
+          scope = channel_specific ? "Channel-specific" : "Global"
+          event.respond "#{scope} prompt '#{name}' not found."
         end
       end
 
@@ -138,19 +169,28 @@ module DiscordBot
       @bot.message do |event|
         next unless event.content.start_with?("!prompt default")
         Rails.logger.info "!prompt default command received"
-        name = event.content.sub("!prompt default", "").strip
+        content = event.content.sub("!prompt default", "").strip
+        
+        # Check if channel-specific flag is provided
+        channel_specific = content.include?("--channel")
+        content = content.gsub("--channel", "").strip if channel_specific
+        channel_id = channel_specific ? event.channel.id.to_s : nil
+        
+        name = content.strip
 
-        prompt = @prompt_service.find_by_name(name)
+        prompt = @prompt_service.find_by_name(name, channel_id)
         if prompt
-          default_prompt = @prompt_service.find_by_name("default")
+          default_prompt = @prompt_service.find_by_name("default", channel_id)
           if default_prompt
-            @prompt_service.update("default", prompt.content)
+            @prompt_service.update("default", prompt.content, channel_id)
           else
-            @prompt_service.create("default", prompt.content)
+            @prompt_service.create("default", prompt.content, channel_id)
           end
-          event.respond "Default prompt set to '#{name}'."
+          scope = channel_specific ? "for this channel" : "globally"
+          event.respond "Default prompt set to '#{name}' #{scope}."
         else
-          event.respond "Prompt '#{name}' not found."
+          scope = channel_specific ? "Channel-specific" : "Global"
+          event.respond "#{scope} prompt '#{name}' not found."
         end
       end
     end
@@ -169,11 +209,16 @@ module DiscordBot
           `!debug` - Show debug information about the bot
 
           **Prompt Management:**
-          `!prompts` - List all available prompts
-          `!prompt set [name] [content]` - Create or update a prompt
-          `!prompt get [name]` - Display the content of a prompt
-          `!prompt delete [name]` - Delete a prompt
-          `!prompt default [name]` - Set a prompt as the default system prompt
+          `!prompts` - List all global prompts
+          `!prompts --channel` - List prompts for this channel
+          `!prompt set [name] [content]` - Create or update a global prompt
+          `!prompt set [name] [content] --channel` - Create or update a channel-specific prompt
+          `!prompt get [name]` - Display the content of a global prompt
+          `!prompt get [name] --channel` - Display the content of a channel-specific prompt
+          `!prompt delete [name]` - Delete a global prompt
+          `!prompt delete [name] --channel` - Delete a channel-specific prompt
+          `!prompt default [name]` - Set a global default system prompt
+          `!prompt default [name] --channel` - Set a channel-specific default system prompt
 
           **Conversation:**
           Just mention the bot or send a message in an allowed channel to start a conversation.
