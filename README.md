@@ -1,6 +1,6 @@
 # Discord Bot for Good Discord
 
-This is a Rails application that runs a Discord bot powered by LLMs.
+This is a Rails application that runs a Discord bot powered by LLMs via OpenRouter.
 
 ## Prerequisites
 
@@ -44,12 +44,24 @@ This is a Rails application that runs a Discord bot powered by LLMs.
    - Discord admin can use generated URL to invite bot
    - Confirm by going to server settings > apps/integrations > bots & apps
 
+6. OpenRouter Setup:
+   - Go to [OpenRouter](https://openrouter.ai/)
+   - Create an account and get your API key from https://openrouter.ai/settings/keys
+
 ## Running the bot
 
 To start the Discord bot:
 
 ```
 rails discord_bot:start
+```
+
+## Testing
+
+Run the test suite with:
+
+```
+bundle exec rake test
 ```
 
 ## Features
