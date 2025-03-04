@@ -18,6 +18,9 @@
 - [x] Implement prompt engineering features
   - [x] Create prompt model and service
   - [x] Implement CRUD operations for prompts
+  - [x] Test prompt commands in Discord
+  - [x] Implement prompt selection in bot commands
+  - [x] Add default prompt functionality
 - [x] Consider pulling in only AREL for persistence
 - [x] Migrate to Rails 8 for better tooling
   - [x] Implement additional message storage features
@@ -25,16 +28,15 @@
 
 🔄 NOW
 
-* [ ] channel specific prompts
-- [ ] Complete prompt engineering features
-  - [ ] Test prompt commands in Discord
-  - [ ] Implement prompt selection in bot commands
-  - [ ] Add user interface for prompt management
+- [ ] Implement channel-specific prompts
+  - [ ] Extend prompt model to include channel ID
+  - [ ] Update prompt service to handle channel-specific prompts
+  - [ ] Add commands for managing channel prompts
+- [ ] Fix mention in discord thread breaking issue
 - [ ] Implement deployment strategy
   - [ ] Create experimental bot separate from stable BodgeIt version
   - [ ] Deploy stable version on long-living server
   - [ ] Containerize to simplify setup
-- [ ] Fix mention in discord thread breaking issue
 
 🎯 NEXT
 
@@ -43,7 +45,6 @@
   - [ ] Add tests to confirm chat history functionality
   - [ ] Improve error handling and recovery
 - [ ] Improve prompt system
-  - [ ] Allow default prompt storage
   - [ ] Enable creation of new prompts from existing ones
   - [ ] Add user preferences for default prompts
 
