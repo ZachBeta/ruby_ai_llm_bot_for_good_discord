@@ -13,7 +13,7 @@ module DiscordBot
       # Set the bot's name in the environment variables
       ENV["BOT_NAME"] = @bot.profile.name
       Rails.logger.info "Bot name set to: #{ENV["BOT_NAME"]}"
-      
+
       # Store start time for uptime calculation
       @start_time = Time.now
       Rails.logger.info "Bot start time recorded: #{@start_time}"
@@ -50,40 +50,40 @@ module DiscordBot
         Rails.logger.info "!debug command received"
         channel_id = event.channel.id
         Rails.logger.info "Channel ID: #{channel_id}"
-        
+
         # Safely get thread_id with error handling
         thread_id = nil
         begin
           Rails.logger.info "Checking if message has thread attribute: #{event.message.respond_to?(:thread)}"
-          
+
           # Check if the channel is a thread type (type 11 in Discord API)
           is_thread_channel = false
           thread_name = "N/A"
-          
+
           if event.message.respond_to?(:channel) && event.message.channel.respond_to?(:type)
             channel_type = event.message.channel.type
             Rails.logger.info "Message channel type: #{channel_type}"
-            
+
             # Discord channel types: 11 = public thread, 12 = private thread
-            if [11, 12].include?(channel_type)
+            if [ 11, 12 ].include?(channel_type)
               is_thread_channel = true
               thread_id = event.channel.id
               thread_name = event.channel.name
               Rails.logger.info "Thread detected via channel type: ID=#{thread_id}, Name=#{thread_name}"
             end
           end
-          
+
           # Fallback to traditional thread detection if needed
           if !is_thread_channel && event.message.respond_to?(:thread)
             thread_id = event.message.thread&.id
             Rails.logger.info "Thread ID from event.message.thread&.id: #{thread_id.inspect}"
           end
-          
+
           # Additional thread detection methods for debugging
           Rails.logger.info "Event class: #{event.class}"
           Rails.logger.info "Message class: #{event.message.class}"
           Rails.logger.info "Message attributes: #{event.message.instance_variables.map(&:to_s).join(', ')}"
-          
+
           if event.message.respond_to?(:channel)
             Rails.logger.info "Message channel class: #{event.message.channel.class}"
             Rails.logger.info "Message channel type: #{event.message.channel.type}" if event.message.channel.respond_to?(:type)
@@ -92,32 +92,32 @@ module DiscordBot
           Rails.logger.error "Error getting thread ID: #{e.message}"
           Rails.logger.error e.backtrace.join("\n")
         end
-        
+
         # Basic stats
         channel_count = @llm.data_store.channel_count
         total_message_count = @llm.data_store.size
-        
+
         # Get thread count
         thread_count = Conversation.distinct.pluck(:thread_id).compact.size
-        
+
         # Get prompt stats
         prompt_count = Prompt.count
         default_prompt = @prompt_service.find_by_name("default")
         default_prompt_name = default_prompt ? "default (#{default_prompt.content[0..30]}...)" : "None (using fallback)"
-        
+
         # Get conversation stats for current channel/thread
         current_channel_count = Conversation.where(channel_id: channel_id).count
         current_thread_count = thread_id ? Conversation.where(channel_id: channel_id, thread_id: thread_id).count : 0
-        
+
         # Get time stats
         oldest_message = Conversation.minimum(:created_at)
         newest_message = Conversation.maximum(:created_at)
-        
+
         # Get uptime with error handling
         uptime_str = "Unknown"
         begin
           uptime = Time.now - @start_time
-          
+
           # Format uptime nicely
           days = (uptime / 86400).floor
           hours = ((uptime % 86400) / 3600).floor
@@ -147,20 +147,20 @@ module DiscordBot
           **Bot Status**
           Using model: #{ENV['BOT_STRING']}
           Bot uptime: #{uptime_str}
-          
+
           **Conversation Stats**
           Total messages: #{total_message_count}
           Active channels: #{channel_count}
           Active threads: #{thread_count}
-          
+
           **Current Context**
           Channel messages: #{current_channel_count}
           #{in_thread ? "Thread: #{thread_name} (#{current_thread_count} messages)" : "Not in a thread"}
-          
+
           **Prompt System**
           Total prompts: #{prompt_count}
           Default prompt: #{default_prompt_name}
-          
+
           **Time Range**
           Oldest message: #{oldest_message ? oldest_message.strftime("%Y-%m-%d %H:%M:%S") : "None"}
           Newest message: #{newest_message ? newest_message.strftime("%Y-%m-%d %H:%M:%S") : "None"}
@@ -174,7 +174,7 @@ module DiscordBot
         next unless event.content.start_with?("!clear")
         Rails.logger.info "!clear command received"
         channel_id = event.channel.id
-        
+
         # Safely get thread_id with error handling
         thread_id = nil
         begin
@@ -362,14 +362,14 @@ module DiscordBot
           # Check if the channel is a thread type (type 11 or 12 in Discord API)
           if event.message.respond_to?(:channel) && event.message.channel.respond_to?(:type)
             channel_type = event.message.channel.type
-            
+
             # Discord channel types: 11 = public thread, 12 = private thread
-            if [11, 12].include?(channel_type)
+            if [ 11, 12 ].include?(channel_type)
               thread_id = event.channel.id
               Rails.logger.info "Thread detected via channel type: ID=#{thread_id}, Name=#{event.channel.name}"
             end
           end
-          
+
           # Fallback to traditional thread detection if needed
           if thread_id.nil? && event.message.respond_to?(:thread)
             thread_id = event.message.thread&.id
