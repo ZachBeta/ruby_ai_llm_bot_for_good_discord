@@ -32,14 +32,14 @@ module DiscordBot
       @prompt_service.create("prompt2", "Content 2")
       prompts = @prompt_service.all
       assert_equal 2, prompts.count
-      assert_equal ["prompt1", "prompt2"], prompts.map(&:name).sort
+      assert_equal [ "prompt1", "prompt2" ], prompts.map(&:name).sort
     end
 
     test "update changes prompt content" do
       @prompt_service.create("test_prompt", "Original content")
       updated_prompt = @prompt_service.update("test_prompt", "Updated content")
       assert_equal "Updated content", updated_prompt.content
-      
+
       # Verify the change persisted
       prompt = @prompt_service.find_by_name("test_prompt")
       assert_equal "Updated content", prompt.content
@@ -53,7 +53,7 @@ module DiscordBot
     test "delete removes a prompt" do
       @prompt_service.create("test_prompt", "Content")
       assert_equal 1, Prompt.count
-      
+
       result = @prompt_service.delete("test_prompt")
       assert_equal true, result
       assert_equal 0, Prompt.count
@@ -64,4 +64,4 @@ module DiscordBot
       assert_equal false, result
     end
   end
-end 
+end
