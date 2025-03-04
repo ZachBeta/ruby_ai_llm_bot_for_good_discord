@@ -25,6 +25,7 @@
 
 🔄 NOW
 
+* [ ] channel specific prompts
 - [ ] Complete prompt engineering features
   - [ ] Test prompt commands in Discord
   - [ ] Implement prompt selection in bot commands

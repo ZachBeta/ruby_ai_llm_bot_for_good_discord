@@ -47,6 +47,7 @@ module DiscordBot
 
     def get_messages(channel_id = "default", thread_id = nil)
       conversation = get_conversation(channel_id, thread_id)
+      bot_name = ENV["BOT_NAME"] || "Bot"
 
       conversation.inject([]) do |acc, message|
         if message[:prompt]
@@ -56,9 +57,12 @@ module DiscordBot
           }
         end
         if message[:response]
+          # Ensure we're not adding the bot name prefix
+          response_content = message[:response]
+
           acc << {
             role: "assistant",
-            content: message[:response]
+            content: response_content
           }
         end
         acc

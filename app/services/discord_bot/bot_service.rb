@@ -9,6 +9,11 @@ module DiscordBot
       @llm = LlmClient.new
       @prompt_service = PromptService.new
       Rails.logger.info "LLM client initialized."
+
+      # Set the bot's name in the environment variables
+      ENV["BOT_NAME"] = @bot.profile.name
+      Rails.logger.info "Bot name set to: #{ENV["BOT_NAME"]}"
+
       setup_commands
       Rails.logger.info "Commands setup."
       send_to_channel(ENV["DISCORD_CHANNEL_ID"], "Restarted\n#{Time.now.iso8601(9)}\n#{ENV['BOT_STRING']}")
@@ -214,6 +219,8 @@ module DiscordBot
         Rails.logger.info "Author ID: #{event.user.id}"
         Rails.logger.info "Author Name: #{event.user.name}"
         Rails.logger.info "Timestamp: #{event.timestamp}"
+        Rails.logger.info "Bot ID: #{@bot.profile.id}"
+        Rails.logger.info "Bot Name: #{@bot.profile.name}"
         Rails.logger.info "=========================="
 
         channel_id = event.channel.id
@@ -242,7 +249,9 @@ module DiscordBot
         Rails.logger.info "User message: #{user_message}"
         response = @llm.generate_response(user_message, channel_id, thread_id)
         Rails.logger.info "Response: #{response}"
-        event.respond response
+
+        # Only respond if we have a valid response
+        event.respond response if response && !response.empty?
       end
     end
   end
