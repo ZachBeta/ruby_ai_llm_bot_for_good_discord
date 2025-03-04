@@ -4,6 +4,7 @@ module DiscordBot
       Rails.logger.info "Initializing DataStore"
       @max_history_size = 20
       Rails.logger.info "Max history size: #{@max_history_size}"
+      @channel_info = {}
     end
 
     def store(message_data)
@@ -85,6 +86,14 @@ module DiscordBot
       Conversation.all.group_by do |conv|
         build_conversation_key(conv.channel_id, conv.thread_id)
       end
+    end
+
+    def store_channel_info(channel_id, channel_info)
+      @channel_info[channel_id.to_s] = channel_info
+    end
+
+    def get_channel_info(channel_id)
+      @channel_info[channel_id.to_s]
     end
 
     private
