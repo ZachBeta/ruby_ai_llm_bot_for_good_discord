@@ -13,6 +13,10 @@ module DiscordBot
       # Set the bot's name in the environment variables
       ENV["BOT_NAME"] = @bot.profile.name
       Rails.logger.info "Bot name set to: #{ENV["BOT_NAME"]}"
+      
+      # Store start time for uptime calculation
+      @start_time = Time.now
+      Rails.logger.info "Bot start time recorded: #{@start_time}"
 
       setup_commands
       Rails.logger.info "Commands setup."
@@ -77,7 +81,7 @@ module DiscordBot
         # Get uptime with error handling
         uptime_str = "Unknown"
         begin
-          uptime = Time.now - @bot.uptime
+          uptime = Time.now - @start_time
           
           # Format uptime nicely
           days = (uptime / 86400).floor
