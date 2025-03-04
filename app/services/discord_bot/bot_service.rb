@@ -202,12 +202,19 @@ module DiscordBot
         # Get allowed channels from env (comma-separated list of channel IDs)
         allowed_channels = ENV["BOT_ALLOWED_CHANNELS"]&.split(",")&.map(&:strip) || []
 
-        # Skip if the bot isn't mentioned and not in an allowed channel
+        # Check if the message is a reply to one of the bot's messages
+        is_reply_to_bot = false
+        if event.message.referenced_message
+          referenced_message = event.message.referenced_message
+          is_reply_to_bot = referenced_message.author.id == @bot.profile.id
+        end
+
+        # Skip if the bot isn't mentioned, not in an allowed channel, and not a reply to the bot
         bot_mentioned = event.content.include?("<@#{@bot.profile.id}>") ||
                         event.content.include?("<@!#{@bot.profile.id}>")
         is_allowed_channel = allowed_channels.include?(event.channel.id.to_s)
 
-        next unless bot_mentioned || is_allowed_channel
+        next unless bot_mentioned || is_allowed_channel || is_reply_to_bot
 
         Rails.logger.info "=== Mention Event Details ==="
         Rails.logger.info "Channel ID: #{event.channel.id}"
@@ -221,6 +228,7 @@ module DiscordBot
         Rails.logger.info "Timestamp: #{event.timestamp}"
         Rails.logger.info "Bot ID: #{@bot.profile.id}"
         Rails.logger.info "Bot Name: #{@bot.profile.name}"
+        Rails.logger.info "Is Reply To Bot: #{is_reply_to_bot}"
         Rails.logger.info "=========================="
 
         channel_id = event.channel.id
