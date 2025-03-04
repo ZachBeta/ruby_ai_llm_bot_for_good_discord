@@ -66,37 +66,62 @@ rails discord_bot:start
 
 ## Prompt Management
 
-The bot now supports storing and managing prompts. Here are the available commands:
+The bot now supports storing and managing prompts, including channel-specific prompts. Here are the available commands:
 
-### List all prompts
+### List prompts
 ```
 !prompts
 ```
-Lists all available prompts by name.
+Lists all global prompts by name.
+
+```
+!prompts --channel
+```
+Lists all prompts available for the current channel (both channel-specific and global).
 
 ### Create or update a prompt
 ```
 !prompt set [name] [content]
 ```
-Creates a new prompt or updates an existing one with the given name and content.
+Creates a new global prompt or updates an existing one with the given name and content.
+
+```
+!prompt set [name] [content] --channel
+```
+Creates a new channel-specific prompt or updates an existing one for the current channel.
 
 ### Get a prompt
 ```
 !prompt get [name]
 ```
-Displays the content of the prompt with the given name.
+Displays the content of the global prompt with the given name.
+
+```
+!prompt get [name] --channel
+```
+Displays the content of the channel-specific prompt with the given name, or falls back to the global prompt if no channel-specific prompt exists.
 
 ### Delete a prompt
 ```
 !prompt delete [name]
 ```
-Deletes the prompt with the given name.
+Deletes the global prompt with the given name.
+
+```
+!prompt delete [name] --channel
+```
+Deletes the channel-specific prompt with the given name for the current channel.
 
 ### Set default prompt
 ```
 !prompt default [name]
 ```
-Sets the prompt with the given name as the default system prompt for all conversations.
+Sets the prompt with the given name as the default system prompt for all conversations globally.
+
+```
+!prompt default [name] --channel
+```
+Sets the prompt with the given name as the default system prompt for conversations in the current channel.
 
 ## Development
 
@@ -105,56 +130,17 @@ The bot code is organized in the `app/services/discord_bot` directory:
 * `bot_service.rb` - Main Discord bot service
 * `llm_client.rb` - Client for interacting with LLMs via OpenRouter
 * `data_store.rb` - Database storage for conversation history
+* `prompt_service.rb` - Service for managing prompts
 
 ## Database
 
-The application uses a SQLite database to store conversation history. The schema includes:
+The application uses a SQLite database to store conversation history and prompts. The schema includes:
 
 * `conversations` - Stores messages and responses with channel and thread IDs
+* `prompts` - Stores prompts with name, content, and optional channel_id
 
 ## Development Tools
 
 ### Conversation Query Service
 
 For development and debugging purposes, the application includes a `ConversationQueryService` that allows you to query and inspect conversation data.
-
-#### Using the Command-Line Script
-
-```
-ruby script/conversation_query.rb COMMAND [ARGS]
-```
-
-Available commands:
-* `recent [LIMIT]` - Show recent conversations (default: 10)
-* `channel CHANNEL_ID [LIMIT]` - Show conversations for a specific channel
-* `thread THREAD_ID [LIMIT]` - Show conversations for a specific thread
-* `search TERM [LIMIT]` - Search conversations containing a term
-* `stats` - Show conversation statistics
-
-Examples:
-```
-ruby script/conversation_query.rb recent 5
-ruby script/conversation_query.rb channel 123456789 3
-ruby script/conversation_query.rb thread 987654321
-ruby script/conversation_query.rb search "hello world"
-ruby script/conversation_query.rb stats
-```
-
-#### Using Rake Tasks
-
-```
-rake conversation:recent[LIMIT]
-rake conversation:channel[CHANNEL_ID,LIMIT]
-rake conversation:thread[THREAD_ID,LIMIT]
-rake conversation:search[TERM,LIMIT]
-rake conversation:stats
-```
-
-Examples:
-```
-rake conversation:recent[5]
-rake conversation:channel[123456789,3]
-rake conversation:thread[987654321]
-rake conversation:search["hello world"]
-rake conversation:stats
-```
