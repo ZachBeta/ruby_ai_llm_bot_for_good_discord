@@ -28,9 +28,11 @@ module DiscordBot
       Rails.logger.info "messages: #{messages}"
 
       response = make_request(messages)
+      bot_name = ENV["BOT_NAME"] || "Bot"
+      formatted_response = "#{bot_name}: #{response}"
 
       @data_store.store({
-        response: response,
+        response: formatted_response,
         channel_id: channel_id,
         thread_id: thread_id,
         timestamp: Time.now
@@ -60,7 +62,13 @@ module DiscordBot
 
     def get_system_prompt_content
       default_prompt = @prompt_service.find_by_name("default")
-      default_prompt&.content || "You are a helpful assistant. You answer short and concise."
+      bot_name = ENV["BOT_NAME"] || "Bot"
+      base_prompt = default_prompt&.content || "You are a helpful assistant. You answer short and concise."
+      
+      # Add bot identity information to the system prompt
+      identity_info = "Your name is #{bot_name}. When users refer to '#{bot_name}' in the conversation, they are referring to you."
+      
+      "#{base_prompt}\n\n#{identity_info}"
     end
 
     def make_request(messages)

@@ -47,6 +47,7 @@ module DiscordBot
 
     def get_messages(channel_id = "default", thread_id = nil)
       conversation = get_conversation(channel_id, thread_id)
+      bot_name = ENV["BOT_NAME"] || "Bot"
 
       conversation.inject([]) do |acc, message|
         if message[:prompt]
@@ -56,9 +57,16 @@ module DiscordBot
           }
         end
         if message[:response]
+          # Extract the bot's name from the response if it's prefixed
+          response_content = message[:response]
+          if response_content.start_with?("#{bot_name}: ")
+            response_content = response_content.sub("#{bot_name}: ", "")
+          end
+          
           acc << {
             role: "assistant",
-            content: message[:response]
+            content: response_content,
+            name: bot_name
           }
         end
         acc
