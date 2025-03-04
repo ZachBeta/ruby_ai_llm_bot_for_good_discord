@@ -1,9 +1,6 @@
-require 'rake/testtask'
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.warning = false
-end
+require_relative "config/application"
 
-task default: :test 
+Rails.application.load_tasks
