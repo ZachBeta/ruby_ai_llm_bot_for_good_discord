@@ -32,13 +32,13 @@ module DiscordBot
     def get_practice_prompt(language_code, difficulty = "intermediate")
       prompt_name = "language_practice_#{language_code}_#{difficulty}"
       prompt = @prompt_service.find_by_name(prompt_name)
-      
+
       # If no specific prompt exists for this language and difficulty, fall back to default
       unless prompt
         prompt = @prompt_service.find_by_name("language_practice_default")
         return create_default_prompt(language_code, difficulty) unless prompt
       end
-      
+
       prompt.content
     end
 
@@ -46,13 +46,13 @@ module DiscordBot
       create_default_prompt("en", "beginner")
       create_default_prompt("en", "intermediate")
       create_default_prompt("en", "advanced")
-      
+
       create_default_prompt("es", "beginner")
       create_default_prompt("es", "intermediate")
       create_default_prompt("es", "advanced")
-      
+
       # Add more languages as needed
-      
+
       create_general_default_prompt
     end
 
@@ -61,7 +61,7 @@ module DiscordBot
     def create_default_prompt(language_code, difficulty)
       language_name = SUPPORTED_LANGUAGES.key(language_code) || "unknown"
       prompt_name = "language_practice_#{language_code}_#{difficulty}"
-      
+
       content = case difficulty
       when "beginner"
         "You are a helpful #{language_name.capitalize} language tutor for beginners. " \
@@ -87,7 +87,7 @@ module DiscordBot
         "Correct mistakes when appropriate and explain grammar concepts. " \
         "Engage in conversation about various topics to help the user practice."
       end
-      
+
       @prompt_service.create(prompt_name, content)
       content
     end
@@ -99,8 +99,8 @@ module DiscordBot
                 "and suggesting better ways to express their ideas. " \
                 "Adapt your language level to match the user's proficiency. " \
                 "If the user asks for help with a specific language task, provide clear guidance."
-      
+
       @prompt_service.create("language_practice_default", content)
     end
   end
-end 
+end

@@ -77,7 +77,7 @@ module DiscordBot
 
       # Check if this is a language practice channel
       language_code = @language_prompt_service.detect_language(channel_name, message_content)
-      
+
       if language_code
         # If language detected, use language practice prompt
         difficulty = "intermediate" # Default difficulty, could be determined from channel name or user settings
@@ -89,7 +89,7 @@ module DiscordBot
       # If not a language practice channel, use default prompt
       default_prompt = @prompt_service.find_by_name("default")
       base_prompt = default_prompt&.content || "You are a helpful assistant. You answer short and concise."
-      
+
       add_bot_identity_to_prompt(base_prompt)
     end
 

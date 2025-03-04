@@ -319,12 +319,12 @@ module DiscordBot
       @bot.message do |event|
         next unless event.content.start_with?("!language")
         Rails.logger.info "!language command received"
-        
+
         command_parts = event.content.split(" ")
         subcommand = command_parts[1]&.downcase
-        
+
         language_prompt_service = LanguagePromptService.new(@prompt_service)
-        
+
         case subcommand
         when "init"
           # Initialize default language practice prompts
@@ -333,7 +333,7 @@ module DiscordBot
         when "list"
           # List available language prompts
           prompts = @prompt_service.all.select { |p| p.name.start_with?("language_practice_") }
-          
+
           if prompts.empty?
             event.respond "No language practice prompts found. Use `!language init` to create default prompts."
           else
@@ -347,9 +347,9 @@ module DiscordBot
           # Detect language from channel name or message
           channel_name = event.channel.name
           message_content = command_parts[2..-1]&.join(" ")
-          
+
           language_code = language_prompt_service.detect_language(channel_name, message_content)
-          
+
           if language_code
             language_name = LanguagePromptService::SUPPORTED_LANGUAGES.key(language_code)
             event.respond "Detected language: #{language_name} (#{language_code})"
@@ -364,7 +364,7 @@ module DiscordBot
             `!language list` - List available language practice prompts
             `!language detect [text]` - Detect language from channel name or provided text
           HELP
-          
+
           event.respond help_text
         end
       end
@@ -418,7 +418,7 @@ module DiscordBot
         Rails.logger.info "=========================="
 
         channel_id = event.channel.id
-        
+
         # Store channel information for language detection
         @llm.data_store.store_channel_info(channel_id, {
           name: event.channel.name,
@@ -437,7 +437,7 @@ module DiscordBot
             if [ 11, 12 ].include?(channel_type)
               thread_id = event.channel.id
               Rails.logger.info "Thread detected via channel type: ID=#{thread_id}, Name=#{event.channel.name}"
-              
+
               # Store thread information for language detection
               @llm.data_store.store_channel_info(thread_id, {
                 name: event.channel.name,
@@ -451,7 +451,7 @@ module DiscordBot
           if thread_id.nil? && event.message.respond_to?(:thread)
             thread_id = event.message.thread&.id
             Rails.logger.info "Thread ID from event.message.thread&.id: #{thread_id.inspect}" if thread_id
-            
+
             if thread_id
               # Store thread information for language detection
               thread_name = event.message.thread&.name || ""
