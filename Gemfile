@@ -48,6 +48,9 @@ group :development, :test do
 
   gem "minitest"
   gem "rake"
+  
+  # Test coverage reporting
+  gem "simplecov", require: false
 end
 
 group :development do
