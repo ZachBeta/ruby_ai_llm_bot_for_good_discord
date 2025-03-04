@@ -49,13 +49,48 @@ module DiscordBot
         next unless event.content.start_with?("!debug")
         Rails.logger.info "!debug command received"
         channel_id = event.channel.id
+        Rails.logger.info "Channel ID: #{channel_id}"
         
         # Safely get thread_id with error handling
         thread_id = nil
         begin
-          thread_id = event.message.thread&.id if event.message.respond_to?(:thread)
+          Rails.logger.info "Checking if message has thread attribute: #{event.message.respond_to?(:thread)}"
+          
+          # Check if the channel is a thread type (type 11 in Discord API)
+          is_thread_channel = false
+          thread_name = "N/A"
+          
+          if event.message.respond_to?(:channel) && event.message.channel.respond_to?(:type)
+            channel_type = event.message.channel.type
+            Rails.logger.info "Message channel type: #{channel_type}"
+            
+            # Discord channel types: 11 = public thread, 12 = private thread
+            if [11, 12].include?(channel_type)
+              is_thread_channel = true
+              thread_id = event.channel.id
+              thread_name = event.channel.name
+              Rails.logger.info "Thread detected via channel type: ID=#{thread_id}, Name=#{thread_name}"
+            end
+          end
+          
+          # Fallback to traditional thread detection if needed
+          if !is_thread_channel && event.message.respond_to?(:thread)
+            thread_id = event.message.thread&.id
+            Rails.logger.info "Thread ID from event.message.thread&.id: #{thread_id.inspect}"
+          end
+          
+          # Additional thread detection methods for debugging
+          Rails.logger.info "Event class: #{event.class}"
+          Rails.logger.info "Message class: #{event.message.class}"
+          Rails.logger.info "Message attributes: #{event.message.instance_variables.map(&:to_s).join(', ')}"
+          
+          if event.message.respond_to?(:channel)
+            Rails.logger.info "Message channel class: #{event.message.channel.class}"
+            Rails.logger.info "Message channel type: #{event.message.channel.type}" if event.message.channel.respond_to?(:type)
+          end
         rescue => e
           Rails.logger.error "Error getting thread ID: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
         end
         
         # Basic stats
@@ -93,6 +128,21 @@ module DiscordBot
           Rails.logger.error "Error calculating uptime: #{e.message}"
         end
 
+        # Determine if we're in a thread
+        in_thread = false
+        begin
+          # Check if the message is in a thread
+          if thread_id
+            in_thread = true
+            Rails.logger.info "In thread: #{in_thread}, Thread name: #{thread_name}"
+          else
+            Rails.logger.info "Not in a thread (thread_id is nil)"
+          end
+        rescue => e
+          Rails.logger.error "Error determining thread status: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
+        end
+
         response = <<~STR
           **Bot Status**
           Using model: #{ENV['BOT_STRING']}
@@ -105,7 +155,7 @@ module DiscordBot
           
           **Current Context**
           Channel messages: #{current_channel_count}
-          #{thread_id ? "Thread messages: #{current_thread_count}" : "Not in a thread"}
+          #{in_thread ? "Thread: #{thread_name} (#{current_thread_count} messages)" : "Not in a thread"}
           
           **Prompt System**
           Total prompts: #{prompt_count}
@@ -306,11 +356,25 @@ module DiscordBot
 
         channel_id = event.channel.id
 
-        # if there is a thread, use it
-        # otherwise, use the channel id
+        # Get thread_id using improved thread detection
         thread_id = nil
         begin
-          thread_id = event.message.thread&.id if event.message.respond_to?(:thread)
+          # Check if the channel is a thread type (type 11 or 12 in Discord API)
+          if event.message.respond_to?(:channel) && event.message.channel.respond_to?(:type)
+            channel_type = event.message.channel.type
+            
+            # Discord channel types: 11 = public thread, 12 = private thread
+            if [11, 12].include?(channel_type)
+              thread_id = event.channel.id
+              Rails.logger.info "Thread detected via channel type: ID=#{thread_id}, Name=#{event.channel.name}"
+            end
+          end
+          
+          # Fallback to traditional thread detection if needed
+          if thread_id.nil? && event.message.respond_to?(:thread)
+            thread_id = event.message.thread&.id
+            Rails.logger.info "Thread ID from event.message.thread&.id: #{thread_id.inspect}" if thread_id
+          end
         rescue => e
           Rails.logger.error "Error getting thread ID: #{e.message}"
         end
