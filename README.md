@@ -23,10 +23,18 @@ This is a Rails application that runs a Discord bot powered by LLMs via OpenRout
 4. Set up environment variables in `.env`:
    ```
    DISCORD_TOKEN="your-discord-token"
-   DISCORD_CHANNEL_ID="your-discord-channel-id"
+   DISCORD_CHANNEL_ID="your-discord-channel-id" # Channel for bot status notifications
    OPENROUTER_API_KEY="your-openrouter-api-key"
    BOT_STRING="anthropic/claude-3.5-sonnet" # or any other model
+   BOT_ALLOWED_CHANNELS="channel-id-1,channel-id-2" # Optional: Channels where bot responds without being mentioned
    ```
+
+   **Environment Variables Explained:**
+   - `DISCORD_TOKEN`: Your Discord bot's authentication token
+   - `DISCORD_CHANNEL_ID`: Channel where the bot sends status updates (e.g., restart notifications)
+   - `OPENROUTER_API_KEY`: Your API key for OpenRouter
+   - `BOT_STRING`: The LLM model to use via OpenRouter
+   - `BOT_ALLOWED_CHANNELS`: Optional comma-separated list of channel IDs where the bot will respond to all messages (not just when mentioned)
 
 5. Discord Bot Setup:
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
@@ -67,6 +75,9 @@ bundle exec rake test
 ## Features
 
 * Responds to messages in allowed channels or when mentioned
+  - In channels listed in `BOT_ALLOWED_CHANNELS`: Responds to all messages
+  - In other channels: Only responds when directly mentioned
+* Sends status notifications to the channel specified in `DISCORD_CHANNEL_ID`
 * Maintains conversation history per channel/thread in the database
 * Supports clearing conversation history with `!clear` command
 * Provides debug information with `!debug` command
