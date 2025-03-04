@@ -13,6 +13,7 @@ module DiscordBot
       Rails.logger.info "LLM client initialized with API key: #{@api_key[0..5]}...#{@api_key[-5..-1]}"
       @data_store = DataStore.new
       @prompt_service = PromptService.new
+      @language_prompt_service = LanguagePromptService.new(@prompt_service)
     end
 
     def generate_response(prompt, channel_id = nil, thread_id = nil)
@@ -44,8 +45,8 @@ module DiscordBot
     private
 
     def build_messages(channel_id, thread_id, prompt)
-      # Get default system prompt or use fallback
-      system_prompt_content = get_system_prompt_content
+      # Get system prompt content
+      system_prompt_content = get_system_prompt_content(channel_id, thread_id, prompt)
 
       system_prompt = [
         {
@@ -60,12 +61,40 @@ module DiscordBot
       system_prompt + history
     end
 
-    def get_system_prompt_content
+    def get_system_prompt_content(channel_id = nil, thread_id = nil, message_content = nil)
+      # Try to get channel name if channel_id is provided
+      channel_name = ""
+      if channel_id
+        begin
+          # This is a placeholder - you'll need to implement a way to get the channel name
+          # from the channel_id, which depends on how you're storing channel information
+          channel = @data_store.get_channel_info(channel_id)
+          channel_name = channel&.name || ""
+        rescue => e
+          Rails.logger.error "Error getting channel name: #{e.message}"
+        end
+      end
+
+      # Check if this is a language practice channel
+      language_code = @language_prompt_service.detect_language(channel_name, message_content)
+
+      if language_code
+        # If language detected, use language practice prompt
+        difficulty = "intermediate" # Default difficulty, could be determined from channel name or user settings
+        language_prompt = @language_prompt_service.get_practice_prompt(language_code, difficulty)
+        Rails.logger.info "Using language practice prompt for #{language_code} (#{difficulty})"
+        return add_bot_identity_to_prompt(language_prompt)
+      end
+
+      # If not a language practice channel, use default prompt
       default_prompt = @prompt_service.find_by_name("default")
-      bot_name = ENV["BOT_NAME"] || "Bot"
       base_prompt = default_prompt&.content || "You are a helpful assistant. You answer short and concise."
 
-      # Add bot identity information to the system prompt
+      add_bot_identity_to_prompt(base_prompt)
+    end
+
+    def add_bot_identity_to_prompt(base_prompt)
+      bot_name = ENV["BOT_NAME"] || "Bot"
       identity_info = "Your name is #{bot_name}. When users refer to '#{bot_name}' in the conversation, they are referring to you. IMPORTANT: Do not include your name at the beginning of your responses."
 
       "#{base_prompt}\n\n#{identity_info}"
