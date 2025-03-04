@@ -89,13 +89,13 @@ bundle exec rake test
 
 ## Prompt Management
 
-The bot now supports storing and managing prompts. Here are the available commands:
+The bot supports storing and managing system prompts that control how the LLM responds to messages. Prompts are stored in the database and can be managed using the following commands:
 
 ### List all prompts
 ```
 !prompts
 ```
-Lists all available prompts by name.
+Lists all available prompts by name. Use this to see what prompts are available for use.
 
 ### Create or update a prompt
 ```
@@ -103,23 +103,75 @@ Lists all available prompts by name.
 ```
 Creates a new prompt or updates an existing one with the given name and content.
 
+**Example:**
+```
+!prompt set helpful You are a helpful assistant that provides detailed and accurate information. Always cite your sources when possible.
+```
+
+This creates a prompt named "helpful" with the specified content. If a prompt with that name already exists, it will be updated with the new content.
+
 ### Get a prompt
 ```
 !prompt get [name]
 ```
-Displays the content of the prompt with the given name.
+Displays the content of the prompt with the given name. This is useful to check what a prompt contains before using it.
+
+**Example:**
+```
+!prompt get helpful
+```
 
 ### Delete a prompt
 ```
 !prompt delete [name]
 ```
-Deletes the prompt with the given name.
+Deletes the prompt with the given name. This action cannot be undone.
+
+**Example:**
+```
+!prompt delete outdated_prompt
+```
 
 ### Set default prompt
 ```
 !prompt default [name]
 ```
-Sets the prompt with the given name as the default system prompt for all conversations.
+Sets the prompt with the given name as the default system prompt for all conversations. The default prompt is used as the system prompt for all conversations unless overridden.
+
+**Example:**
+```
+!prompt default helpful
+```
+
+### How Prompts Work
+
+1. **Default Prompt**: The bot uses the prompt named "default" as the system prompt for all conversations. If no default prompt exists, a fallback prompt is used.
+
+2. **System Prompt**: The system prompt is sent to the LLM at the beginning of each conversation to set the context and behavior of the bot.
+
+3. **Conversation History**: The bot maintains conversation history per channel/thread, which is sent to the LLM along with the system prompt for each request.
+
+4. **Bot Identity**: The system prompt automatically includes information about the bot's name to help the LLM understand when it's being addressed.
+
+### Example Workflow
+
+1. Create a new prompt:
+   ```
+   !prompt set coding_assistant You are a coding assistant that helps with programming questions. Provide code examples and explanations that are clear and concise.
+   ```
+
+2. Set it as the default:
+   ```
+   !prompt default coding_assistant
+   ```
+
+3. The bot will now use this prompt for all new conversations, making it behave as a coding assistant.
+
+4. To switch to a different persona, create another prompt and set it as default:
+   ```
+   !prompt set storyteller You are a creative storyteller who can craft engaging narratives and help users develop their own stories.
+   !prompt default storyteller
+   ```
 
 ## Development
 
