@@ -37,3 +37,6 @@ packages
 .env
 .env.*
 .gems
+
+# Ignore SimpleCov coverage reports
+/coverage/
