@@ -249,8 +249,9 @@ module DiscordBot
         Rails.logger.info "User message: #{user_message}"
         response = @llm.generate_response(user_message, channel_id, thread_id)
         Rails.logger.info "Response: #{response}"
-        bot_response = "#{@bot.profile.name}: #{response}"
-        event.respond response
+        
+        # Only respond if we have a valid response
+        event.respond response if response && !response.empty?
       end
     end
   end

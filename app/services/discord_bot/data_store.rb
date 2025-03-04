@@ -57,16 +57,12 @@ module DiscordBot
           }
         end
         if message[:response]
-          # Extract the bot's name from the response if it's prefixed
+          # Ensure we're not adding the bot name prefix
           response_content = message[:response]
-          if response_content.start_with?("#{bot_name}: ")
-            response_content = response_content.sub("#{bot_name}: ", "")
-          end
           
           acc << {
             role: "assistant",
-            content: response_content,
-            name: bot_name
+            content: response_content
           }
         end
         acc

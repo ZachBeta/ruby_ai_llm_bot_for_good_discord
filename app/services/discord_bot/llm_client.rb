@@ -28,16 +28,16 @@ module DiscordBot
       Rails.logger.info "messages: #{messages}"
 
       response = make_request(messages)
-      bot_name = ENV["BOT_NAME"] || "Bot"
-      formatted_response = "#{bot_name}: #{response}"
-
+      
+      # Store the response without the bot name prefix
       @data_store.store({
-        response: formatted_response,
+        response: response,
         channel_id: channel_id,
         thread_id: thread_id,
         timestamp: Time.now
       })
 
+      # Return just the response
       response
     end
 
@@ -66,7 +66,7 @@ module DiscordBot
       base_prompt = default_prompt&.content || "You are a helpful assistant. You answer short and concise."
       
       # Add bot identity information to the system prompt
-      identity_info = "Your name is #{bot_name}. When users refer to '#{bot_name}' in the conversation, they are referring to you."
+      identity_info = "Your name is #{bot_name}. When users refer to '#{bot_name}' in the conversation, they are referring to you. IMPORTANT: Do not include your name at the beginning of your responses."
       
       "#{base_prompt}\n\n#{identity_info}"
     end
@@ -84,15 +84,33 @@ module DiscordBot
         messages: messages
       }.to_json
 
-      Rails.logger.info "request body: #{request.body}"
+      Rails.logger.info "Sending request to LLM API..."
+      Rails.logger.info "Request body: #{request.body}"
+      
       response = http.request(request)
-      Rails.logger.info "response body parsed: #{JSON.parse(response.body)}"
-      Rails.logger.info "response body parsed choices first message content: #{JSON.parse(response.body)['choices'][0]['message']['content']}"
-      good_response = JSON.parse(response.body)["choices"][0]["message"]["content"]
-
-      # trim good_response down to 2000 characters
-      good_response = good_response[0..2000]
-      good_response
+      
+      Rails.logger.info "Response status: #{response.code}"
+      Rails.logger.info "Response body: #{response.body}"
+      
+      begin
+        parsed_response = JSON.parse(response.body)
+        Rails.logger.info "Response parsed successfully"
+        
+        if parsed_response["choices"] && parsed_response["choices"][0] && parsed_response["choices"][0]["message"]
+          good_response = parsed_response["choices"][0]["message"]["content"]
+          Rails.logger.info "Extracted response content: #{good_response[0..100]}..."
+          
+          # trim good_response down to 2000 characters
+          good_response = good_response[0..2000]
+          return good_response
+        else
+          Rails.logger.error "Invalid response structure: #{parsed_response}"
+          return "Error: Invalid response from LLM"
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error "JSON parsing error: #{e.message}"
+        return "Error: Could not parse LLM response"
+      end
     end
 
     def parse_response(response)
