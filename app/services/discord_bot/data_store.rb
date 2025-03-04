@@ -59,7 +59,7 @@ module DiscordBot
         if message[:response]
           # Ensure we're not adding the bot name prefix
           response_content = message[:response]
-          
+
           acc << {
             role: "assistant",
             content: response_content
